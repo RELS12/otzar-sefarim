@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>אוצר הספרים כרם ביבנה</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@700;900&family=Heebo:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary: #3d0e17;       
+      --secondary: #b8863b;     
+      --olive: #5d6e2b;         
+      --accent: #25D366;        
+      --bg: #fbf8f2;            
+      --card-bg: #ffffff;
+      --text: #2c1a1d;
+      --text-muted: #6b585b;
+      --border: #e8ded0;
+      --radius: 12px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Heebo', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: linear-gradient(145deg, #2b080f 0%, #4a131e 60%, #360a12 100%);
+      color: #fff;
+      padding: 30px 20px 35px 20px;
+      text-align: center;
+      border-bottom: 4px solid var(--secondary);
+      position: relative;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+    }
+
+    .header-content {
+      max-width: 850px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .logo-wrapper {
+      background: #faf6ee;
+      padding: 6px;
+      border-radius: 20px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.35);
+      border: 3px solid var(--secondary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 220px;
+      height: 220px;
+      overflow: hidden;
+    }
+
+    .logo-wrapper img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      border-radius: 14px;
+      object-fit: cover;
+    }
+
+    h1 {
+      font-family: 'Frank Ruhl Libre', serif;
+      font-size: 2.5rem;
+      color: #fff;
+      letter-spacing: 0.5px;
+      text-shadow: 1px 2px 4px rgba(0,0,0,0.4);
+    }
+
+    .subtitle {
+      color: #f0dfc8;
+      font-size: 1.25rem;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      direction: rtl;
+    }
+
+    .admin-btn {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      background: rgba(255,255,255,0.12);
+      color: #f7eade;
+      border: 1px solid rgba(255,255,255,0.25);
+      padding: 8px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: 0.2s;
+    }
+
+    .admin-btn:hover {
+      background: rgba(255,255,255,0.22);
+      color: #fff;
+    }
+
+    main {
+      flex: 1;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 30px 20px 50px 20px;
+      width: 100%;
+    }
+
+    /* שורת חיפוש ספרים */
+    .search-container {
+      max-width: 550px;
+      margin: 0 auto 20px auto;
+      position: relative;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 13px 45px 13px 20px;
+      border-radius: 25px;
+      border: 2px solid var(--secondary);
+      background: #ffffff;
+      font-size: 1.05rem;
+      color: var(--text);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+      transition: all 0.2s ease;
+    }
+
+    .search-input:focus {
+      outline: none;
+      box-shadow: 0 4px 18px rgba(184, 134, 59, 0.35);
+      border-color: var(--primary);
+    }
+
+    .search-icon {
+      position: absolute;
+      top: 50%;
+      right: 16px;
+      transform: translateY(-50%);
+      color: var(--secondary);
+      font-size: 1.2rem;
+      pointer-events: none;
+    }
+
+    /* סרגל סינון קטגוריות */
+    .categories-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 30px;
+    }
+
+    .category-chip {
+      background: #ffffff;
+      color: var(--primary);
+      border: 1px solid var(--secondary);
+      padding: 8px 18px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    }
+
+    .category-chip:hover {
+      background: #f7ede0;
+    }
+
+    .category-chip.active {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+      box-shadow: 0 3px 10px rgba(61, 14, 23, 0.25);
+    }
+
+    /* פאנל ניהול */
+    .admin-panel {
+      display: none;
+      background: #fff;
+      border: 2px dashed var(--secondary);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 35px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+    }
+
+    .admin-panel.active { display: block; }
+
+    .admin-panel h3 {
+      font-family: 'Frank Ruhl Libre', serif;
+      color: var(--primary);
+      font-size: 1.4rem;
+      margin-bottom: 5px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin: 15px 0;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 11px;
+      border: 1px solid #d5c8be;
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 0.95rem;
+      background: #faf8f5;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--secondary);
+      background: #fff;
+      box-shadow: 0 0 0 2px rgba(184, 134, 59, 0.2);
+    }
+
+    .file-input-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .file-input-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    .btn-submit {
+      background: linear-gradient(135deg, var(--secondary) 0%, #9e702c 100%);
+      color: #fff;
+      border: none;
+      padding: 12px 24px;
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      box-shadow: 0 2px 8px rgba(184,134,59,0.3);
+      transition: 0.2s;
+    }
+
+    .btn-submit:hover {
+      background: linear-gradient(135deg, #a6762e 0%, #8c6022 100%);
+    }
+
+    .admin-subbox {
+      background: #faf6ef;
+      border: 1px solid #e8decb;
+      border-radius: 8px;
+      padding: 15px;
+      margin-top: 20px;
+    }
+
+    .admin-cat-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .admin-cat-tag {
+      background: #fff;
+      border: 1px solid #d8cbba;
+      padding: 5px 12px;
+      border-radius: 16px;
+      font-size: 0.85rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .admin-cat-tag button {
+      background: none;
+      border: none;
+      color: #c93b2b;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    /* כרטיסי ספרים */
+    .books-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 25px;
+    }
+
+    .book-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.05);
+      position: relative;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .book-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 22px rgba(61, 14, 23, 0.14);
+    }
+
+    .book-badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(61, 14, 23, 0.88);
+      color: #fff;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      z-index: 2;
+    }
+
+    .book-img {
+      width: 100%;
+      height: 220px;
+      background: #f7f2ea;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-bottom: 1px solid #eee5da;
+      overflow: hidden;
+    }
+
+    .book-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+
+    .book-card:hover .book-img img {
+      transform: scale(1.04);
+    }
+
+    .book-details {
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .book-title {
+      font-family: 'Frank Ruhl Libre', serif;
+      font-size: 1.35rem;
+      color: var(--primary);
+      margin-bottom: 6px;
+      font-weight: 900;
+    }
+
+    .book-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 15px;
+      flex: 1;
+      white-space: pre-line;
+      line-height: 1.5;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .book-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid #f2ebe1;
+      padding-top: 14px;
+    }
+
+    .book-price {
+      font-size: 1.35rem;
+      font-weight: bold;
+      color: var(--primary);
+    }
+
+    .wa-link {
+      background: var(--accent);
+      color: #fff;
+      text-decoration: none;
+      padding: 9px 15px;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 0.85rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 2px 8px rgba(37,211,102,0.3);
+      transition: background 0.2s;
+    }
+
+    .wa-link:hover {
+      background: #20bd5a;
+    }
+
+    .del-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: #c93b2b;
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      cursor: pointer;
+      display: none;
+      font-weight: bold;
+      z-index: 3;
+    }
+
+    .admin-mode .del-btn { display: block; }
+
+    /* מודאל פרטי ספר מוגדל */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.65);
+      z-index: 10000;
+      align-items: center;
+      justify-content: center;
+      padding: 15px;
+    }
+
+    .modal-overlay.active { display: flex; }
+
+    .book-modal-box {
+      background: #ffffff;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 650px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 12px 36px rgba(0,0,0,0.3);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .book-modal-img-wrap {
+      width: 100%;
+      height: 360px;
+      background: #f7f2ea;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-top-left-radius: 16px;
+      border-top-right-radius: 16px;
+      overflow: hidden;
+      border-bottom: 2px solid #e8decb;
+    }
+
+    .book-modal-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .book-modal-content {
+      padding: 24px;
+    }
+
+    .book-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 15px;
+      margin-bottom: 12px;
+    }
+
+    .book-modal-title {
+      font-family: 'Frank Ruhl Libre', serif;
+      font-size: 1.8rem;
+      color: var(--primary);
+      font-weight: 900;
+      line-height: 1.2;
+    }
+
+    .book-modal-badge {
+      background: var(--primary);
+      color: #fff;
+      padding: 4px 12px;
+      border-radius: 14px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .book-modal-desc {
+      font-size: 1.05rem;
+      color: var(--text);
+      line-height: 1.6;
+      margin: 15px 0 25px 0;
+      white-space: pre-line;
+      background: #fdfaf6;
+      padding: 14px;
+      border-radius: 8px;
+      border: 1px solid #eee4d8;
+    }
+
+    .book-modal-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid #f2ebe1;
+      padding-top: 15px;
+    }
+
+    .book-modal-price {
+      font-size: 1.7rem;
+      font-weight: bold;
+      color: var(--primary);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      background: rgba(0,0,0,0.55);
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      color: #ffffff;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      transition: background 0.2s;
+    }
+
+    .modal-close:hover {
+      background: rgba(0,0,0,0.8);
+    }
+
+    /* מודאל מנהל */
+    .admin-modal-box {
+      background: #fff;
+      border-radius: 12px;
+      padding: 25px;
+      width: 100%;
+      max-width: 360px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      position: relative;
+    }
+
+    .admin-modal-box h3 {
+      color: var(--primary);
+      font-family: 'Frank Ruhl Libre', serif;
+      margin-bottom: 15px;
+      font-size: 1.4rem;
+    }
+
+    /* כפתור ווצאפ צף */
+    .floating-whatsapp {
+      position: fixed;
+      bottom: 25px;
+      left: 25px;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      direction: rtl;
+    }
+
+    .whatsapp-bubble {
+      background: #ffffff;
+      color: var(--text);
+      padding: 9px 16px;
+      border-radius: 22px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.18);
+      border: 1px solid #e5dbcf;
+      white-space: nowrap;
+      transition: transform 0.2s ease;
+    }
+
+    .whatsapp-icon-btn {
+      width: 60px;
+      height: 60px;
+      background-color: var(--accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      box-shadow: 0 6px 20px rgba(37, 211, 102, 0.45);
+      transition: transform 0.2s, box-shadow 0.2s;
+      animation: pulse-green 2.5s infinite;
+    }
+
+    .floating-whatsapp:hover .whatsapp-icon-btn {
+      transform: scale(1.08);
+      box-shadow: 0 8px 24px rgba(37, 211, 102, 0.6);
+    }
+
+    .floating-whatsapp:hover .whatsapp-bubble {
+      transform: translateX(-4px);
+    }
+
+    @keyframes pulse-green {
+      0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); }
+      70% { box-shadow: 0 0 0 16px rgba(37, 211, 102, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+    }
+
+    footer {
+      background: #20060b;
+      color: #d1b8bc;
+      text-align: center;
+      padding: 22px;
+      font-size: 0.9rem;
+      margin-top: auto;
+      border-top: 3px solid var(--secondary);
+    }
+
+    footer p { margin: 4px 0; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <button class="admin-btn" onclick="openLoginModal()">🔒 כניסת מנהל</button>
+    <div class="header-content">
+      <div class="logo-wrapper">
+        <img id="mainLogo" 
+             src="index.html.jpeg" 
+             onerror="tryNextLogo(this)" 
+             alt="אוצר הספרים כרם ביבנה">
+      </div>
+      <h1>אוצר הספרים כרם ביבנה</h1>
+      <p class="subtitle">ספרי קודש וייודאיקה • אוראל - 053-8218060</p>
+    </div>
+  </header>
+
+  <main>
+    <!-- שורת חיפוש מהיר -->
+    <div class="search-container">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="searchInput" class="search-input" placeholder="חיפוש ספר לפי שם או תיאור..." oninput="handleSearch()">
+    </div>
+
+    <!-- פאנל ניהול -->
+    <section id="adminSec" class="admin-panel">
+      <h3>הוספת ספר חדש לקטלוג</h3>
+      <form onsubmit="addBook(event)">
+        <div class="form-grid">
+          <input type="text" id="bName" placeholder="שם הספר *" required>
+          <input type="number" id="bPrice" placeholder="מחיר (₪) *" required>
+          <select id="bCategory" required>
+          </select>
+          <div class="file-input-wrapper">
+            <span class="file-input-label">העלה תמונה מהמכשיר:</span>
+            <input type="file" id="bFileInput" accept="image/*" onchange="previewBookFile(event)">
+          </div>
+        </div>
+        <textarea id="bDesc" rows="2" placeholder="תיאור הספר (הוצאה, כרכים, מצב הספר)..." style="margin-bottom:12px;"></textarea>
+        <button type="submit" class="btn-submit">➕ הוסף ספר</button>
+        <button type="button" onclick="logout()" style="background:none; border:none; color:#c93b2b; margin-right:15px; cursor:pointer; font-weight:600;">יציאה מניהול</button>
+      </form>
+
+      <div class="admin-subbox">
+        <h4 style="color: var(--primary); margin-bottom: 8px;">⚙️ ניהול קטגוריות באתר</h4>
+        <div style="display: flex; gap: 8px; max-width: 400px;">
+          <input type="text" id="newCatName" placeholder="שם קטגוריה חדשה..." style="padding: 8px;">
+          <button type="button" class="btn-submit" onclick="addNewCategory()" style="padding: 8px 16px; font-size: 0.85rem;">הוסף</button>
+        </div>
+        <div class="admin-cat-list" id="adminCatList"></div>
+      </div>
+
+      <div class="admin-subbox">
+        <h4 style="color: var(--primary); margin-bottom: 8px;">🔐 שינוי סיסמת מנהל</h4>
+        <div style="display: flex; gap: 8px; max-width: 400px;">
+          <input type="password" id="newAdminPass" placeholder="הזן סיסמה חדשה..." style="padding: 8px;">
+          <button type="button" class="btn-submit" onclick="changePassword()" style="padding: 8px 16px; font-size: 0.85rem;">עדכן סיסמה</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- סרגל סינון קטגוריות -->
+    <div class="categories-bar" id="categoriesBar"></div>
+
+    <!-- רשת הספרים -->
+    <div id="booksGrid" class="books-grid"></div>
+  </main>
+
+  <!-- מודאל כניסת מנהל -->
+  <div class="modal-overlay" id="loginModal">
+    <div class="admin-modal-box">
+      <button class="modal-close" style="top:12px; left:12px;" onclick="closeLoginModal()">✕</button>
+      <h3>כניסת מנהל</h3>
+      <input type="password" id="loginPassInput" placeholder="הזן סיסמת מנהל..." style="margin-bottom: 15px;">
+      <button class="btn-submit" style="width: 100%;" onclick="submitLogin()">התחבר</button>
+    </div>
+  </div>
+
+  <!-- מודאל תצוגת ספר מוגדלת ומפורטת -->
+  <div class="modal-overlay" id="bookDetailsModal" onclick="closeBookModal(event)">
+    <div class="book-modal-box" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="closeBookModal()">✕</button>
+      <div class="book-modal-img-wrap" id="modalBookImg"></div>
+      <div class="book-modal-content">
+        <div class="book-modal-header">
+          <div class="book-modal-title" id="modalBookTitle"></div>
+          <div class="book-modal-badge" id="modalBookBadge"></div>
+        </div>
+        <div class="book-modal-desc" id="modalBookDesc"></div>
+        <div class="book-modal-footer">
+          <div class="book-modal-price" id="modalBookPrice"></div>
+          <a href="#" target="_blank" class="wa-link" id="modalBookWa" style="padding: 10px 20px; font-size: 1rem;">הזמנה בווצאפ</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- כפתור ווצאפ צף -->
+  <a href="https://wa.me/972538218060?text=%D7%A9%D7%9C%D7%95%D7%9D%2C%20%D7%9C%D7%90%20%D7%9E%D7%A6%D7%90%D7%AA%D7%99%20%D7%91%D7%90%D7%AA%D7%A8%20%D7%90%D7%AA%20%D7%94%D7%A1%D7%A4%D7%A8%20%D7%A9%D7%90%D7%A0%D7%99%20%D7%9E%D7%97%D7%A4%D7%A9.%20%D7%94%D7%90%D7%9D%20%D7%90%D7%A4%D7%A9%D7%A8%20%D7%9C%D7%94%D7%96%D7%9E%D7%99%D7%9F%3A%20" 
+     target="_blank" 
+     rel="noopener noreferrer" 
+     class="floating-whatsapp" 
+     title="פנייה בווצאפ לאוצר הספרים">
+    <div class="whatsapp-bubble">לא מצאת ספר? פנה אלינו בווצאפ!</div>
+    <div class="whatsapp-icon-btn">
+      <svg width="34" height="34" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.275.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.42-.099.825zm-3.392-12.416c-5.514 0-10 4.486-10 10 0 1.76.459 3.413 1.261 4.855l-1.292 4.729 4.856-1.274c1.398.761 2.991 1.19 4.675 1.19 5.514 0 10-4.486 10-10s-4.486-10-10-10z"/>
+      </svg>
+    </div>
+  </a>
+
+  <footer>
+    <p>אוצר הספרים כרם ביבנה • ספרי קודש וייודאיקה • אוראל - 053-8218060 ©</p>
+  </footer>
+
+  <script>
+    const PHONE = "972538218060";
+    let allBooks = [];
+    let categories = [];
+    let selectedCategory = "הכל";
+    let searchQuery = "";
+    let isAdmin = false;
+    let adminPass = "2468";
+    let currentUploadedImageBase64 = "";
+
+    const defaultCategories = ["ש\"ס ופוסקים", "מחשבה ומוסר", "תנ\"ך ופירושים", "ספרי ילדים", "יודאיקה ותשמישי קדושה"];
+
+    const initialBooks = [
+      {
+        id: "1",
+        name: "שו״ת יביע אומר (סט)",
+        price: 340,
+        category: "ש\"ס ופוסקים",
+        desc: "סט שלם במצב חדש, כריכה קשה ומהודרת, אותיות מאירות עיניים.",
+        img: ""
+      },
+      {
+        id: "2",
+        name: "משנה ברורה ברור ומאיר",
+        price: 90,
+        category: "ש\"ס ופוסקים",
+        desc: "כרך בודד על הלכות תפילה, כולל ביאורים והערות מעשיות.",
+        img: ""
+      }
+    ];
+
+    const possibleLogoNames = ["index.html.jpeg", "logo.jpg", "logo.jpeg", "index.html.jpg"];
+    let logoTryIndex = 0;
+
+    function tryNextLogo(imgElement) {
+      logoTryIndex++;
+      if (logoTryIndex < possibleLogoNames.length) {
+        imgElement.src = possibleLogoNames[logoTryIndex];
+      }
+    }
+
+    function initData() {
+      const savedPass = localStorage.getItem('kb_admin_pass');
+      if (savedPass) adminPass = savedPass;
+
+      const savedCats = localStorage.getItem('kb_categories');
+      if (savedCats) {
+        categories = JSON.parse(savedCats);
+      } else {
+        categories = defaultCategories;
+        localStorage.setItem('kb_categories', JSON.stringify(categories));
+      }
+
+      const savedBooks = localStorage.getItem('kb_books');
+      if (savedBooks) {
+        allBooks = JSON.parse(savedBooks);
+      } else {
+        allBooks = initialBooks;
+        localStorage.setItem('kb_books', JSON.stringify(allBooks));
+      }
+
+      renderCategoriesBar();
+      updateCategorySelectOptions();
+      renderCatalog();
+    }
+
+    /* חיפוש */
+    function handleSearch() {
+      searchQuery = document.getElementById('searchInput').value.trim().toLowerCase();
+      renderCatalog();
+    }
+
+    /* מודאל מנהל */
+    function openLoginModal() {
+      document.getElementById('loginPassInput').value = '';
+      document.getElementById('loginModal').classList.add('active');
+    }
+
+    function closeLoginModal() {
+      document.getElementById('loginModal').classList.remove('active');
+    }
+
+    function submitLogin() {
+      const p = document.getElementById('loginPassInput').value;
+      if (p === adminPass) {
+        isAdmin = true;
+        document.body.classList.add('admin-mode');
+        document.getElementById('adminSec').classList.add('active');
+        closeLoginModal();
+        renderCatalog();
+        alert('התחברת בהצלחה כמנהל!');
+      } else {
+        alert('סיסמה שגויה!');
+      }
+    }
+
+    function logout() {
+      isAdmin = false;
+      document.body.classList.remove('admin-mode');
+      document.getElementById('adminSec').classList.remove('active');
+      renderCatalog();
+    }
+
+    function changePassword() {
+      const p = document.getElementById('newAdminPass').value.trim();
+      if (!p) {
+        alert('נא להזין סיסמה חדשה');
+        return;
+      }
+      adminPass = p;
+      localStorage.setItem('kb_admin_pass', p);
+      document.getElementById('newAdminPass').value = '';
+      alert('הסיסמה עודכנה בהצלחה!');
+    }
+
+    /* קטגוריות */
+    function renderCategoriesBar() {
+      const bar = document.getElementById('categoriesBar');
+      bar.innerHTML = '';
+
+      const allBtn = document.createElement('button');
+      allBtn.className = `category-chip ${selectedCategory === 'הכל' ? 'active' : ''}`;
+      allBtn.textContent = 'הכל';
+      allBtn.onclick = () => filterByCategory('הכל');
+      bar.appendChild(allBtn);
+
+      categories.forEach(cat => {
+        const btn = document.createElement('button');
+        btn.className = `category-chip ${selectedCategory === cat ? 'active' : ''}`;
+        btn.textContent = cat;
+        btn.onclick = () => filterByCategory(cat);
+        bar.appendChild(btn);
+      });
+
+      renderAdminCategoryList();
+    }
+
+    function filterByCategory(cat) {
+      selectedCategory = cat;
+      renderCategoriesBar();
+      renderCatalog();
+    }
+
+    function updateCategorySelectOptions() {
+      const sel = document.getElementById('bCategory');
+      sel.innerHTML = '<option value="" disabled selected>בחר קטגוריה *</option>';
+      categories.forEach(cat => {
+        const opt = document.createElement('option');
+        opt.value = cat;
+        opt.textContent = cat;
+        sel.appendChild(opt);
+      });
+    }
+
+    function renderAdminCategoryList() {
+      const list = document.getElementById('adminCatList');
+      list.innerHTML = '';
+      categories.forEach((cat, index) => {
+        const tag = document.createElement('div');
+        tag.className = 'admin-cat-tag';
+        tag.innerHTML = `<span>${cat}</span> <button type="button" onclick="deleteCategory(${index})" title="מחק קטגוריה">✕</button>`;
+        list.appendChild(tag);
+      });
+    }
+
+    function addNewCategory() {
+      const input = document.getElementById('newCatName');
+      const val = input.value.trim();
+      if (!val) return;
+      if (categories.includes(val)) {
+        alert('קטגוריה זו כבר קיימת!');
+        return;
+      }
+      categories.push(val);
+      localStorage.setItem('kb_categories', JSON.stringify(categories));
+      input.value = '';
+      renderCategoriesBar();
+      updateCategorySelectOptions();
+    }
+
+    function deleteCategory(index) {
+      const catToDelete = categories[index];
+      if (!confirm(`האם למחוק את הקטגוריה "${catToDelete}"?`)) return;
+      categories.splice(index, 1);
+      localStorage.setItem('kb_categories', JSON.stringify(categories));
+      if (selectedCategory === catToDelete) selectedCategory = 'הכל';
+      renderCategoriesBar();
+      updateCategorySelectOptions();
+      renderCatalog();
+    }
+
+    function previewBookFile(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        currentUploadedImageBase64 = evt.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    /* פתיחת מודאל מוגדל ומפורט לספר */
+    function openBookDetails(bookId) {
+      const book = allBooks.find(b => b.id === bookId);
+      if (!book) return;
+
+      const imgWrap = document.getElementById('modalBookImg');
+      if (book.img) {
+        imgWrap.innerHTML = `<img src="${book.img}" alt="${book.name}">`;
+      } else {
+        imgWrap.innerHTML = `<span style="font-size: 5rem;">📖</span>`;
+      }
+
+      document.getElementById('modalBookTitle').textContent = book.name;
+      document.getElementById('modalBookBadge').textContent = book.category || 'ספרי קודש';
+      document.getElementById('modalBookDesc').textContent = book.desc || 'אין תיאור נוסף עבור ספר זה.';
+      document.getElementById('modalBookPrice').textContent = `${book.price} ₪`;
+
+      const msg = encodeURIComponent(`שלום, אני מעוניין לרכוש את הספר "${book.name}" במחיר ${book.price} ₪ מתוך אתר אוצר הספרים כרם ביבנה.`);
+      document.getElementById('modalBookWa').href = `https://wa.me/${PHONE}?text=${msg}`;
+
+      document.getElementById('bookDetailsModal').classList.add('active');
+    }
+
+    function closeBookModal() {
+      document.getElementById('bookDetailsModal').classList.remove('active');
+    }
+
+    /* הצגת הקטלוג עם סינון וחיפוש */
+    function renderCatalog() {
+      const grid = document.getElementById('booksGrid');
+      grid.innerHTML = '';
+
+      let filtered = allBooks;
+
+      // סינון לפי קטגוריה
+      if (selectedCategory !== 'הכל') {
+        filtered = filtered.filter(b => b.category === selectedCategory);
+      }
+
+      // סינון לפי חיפוש
+      if (searchQuery) {
+        filtered = filtered.filter(b => 
+          (b.name && b.name.toLowerCase().includes(searchQuery)) ||
+          (b.desc && b.desc.toLowerCase().includes(searchQuery))
+        );
+      }
+
+      if (filtered.length === 0) {
+        grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; color:#888; padding:45px; font-size:1.1rem;">לא נמצאו ספרים התואמים לחיפוש זה.</div>';
+        return;
+      }
+
+      filtered.forEach(b => {
+        const msg = encodeURIComponent(`שלום, אני מעוניין לרכוש את הספר "${b.name}" במחיר ${b.price} ₪ מתוך אתר אוצר הספרים כרם ביבנה.`);
+        const wa = `https://wa.me/${PHONE}?text=${msg}`;
+
+        grid.innerHTML += `
+          <div class="book-card" onclick="openBookDetails('${b.id}')">
+            ${b.category ? `<span class="book-badge">${b.category}</span>` : ''}
+            ${isAdmin ? `<button class="del-btn" onclick="event.stopPropagation(); delBook('${b.id}')" title="מחק ספר">✕</button>` : ''}
+            <div class="book-img">
+              ${b.img ? `<img src="${b.img}" onerror="this.parentElement.innerHTML='<span style=\\'font-size:3rem;\\'>📖</span>'">` : '<span style="font-size:3rem;">📖</span>'}
+            </div>
+            <div class="book-details">
+              <div class="book-title">${b.name}</div>
+              <div class="book-desc">${b.desc || 'אין תיאור נוסף.'}</div>
+              <div class="book-footer">
+                <div class="book-price">${b.price} ₪</div>
+                <a href="${wa}" target="_blank" class="wa-link" onclick="event.stopPropagation()">הזמנה בווצאפ</a>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function addBook(e) {
+      e.preventDefault();
+      const name = document.getElementById('bName').value.trim();
+      const price = document.getElementById('bPrice').value.trim();
+      const category = document.getElementById('bCategory').value;
+      const desc = document.getElementById('bDesc').value.trim();
+
+      if (!name || !price || !category) {
+        alert('נא למלא את כל שדות החובה');
+        return;
+      }
+
+      const newB = {
+        id: Date.now().toString(),
+        name,
+        price,
+        category,
+        img: currentUploadedImageBase64,
+        desc
+      };
+
+      allBooks.unshift(newB);
+      localStorage.setItem('kb_books', JSON.stringify(allBooks));
+      currentUploadedImageBase64 = "";
+      document.getElementById('bFileInput').value = '';
+      renderCatalog();
+      alert('הספר נוסף בהצלחה לקטלוג!');
+      e.target.reset();
+    }
+
+    function delBook(id) {
+      if (!confirm('האם אתה בטוח שברצונך למחוק ספר זה?')) return;
+      allBooks = allBooks.filter(b => b.id !== id);
+      localStorage.setItem('kb_books', JSON.stringify(allBooks));
+      renderCatalog();
+    }
+
+    initData();
+  </script>
+</body>
+</html>
