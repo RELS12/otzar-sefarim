@@ -21,7 +21,7 @@
       --radius: 12px;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
     body {
       font-family: 'Heebo', sans-serif;
@@ -152,6 +152,7 @@
       font-size: 0.95rem;
       transition: all 0.2s ease;
       box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+      user-select: none;
     }
 
     .category-chip:hover {
@@ -183,6 +184,7 @@
       position: relative;
       cursor: pointer;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
+      user-select: none;
     }
 
     .book-card:hover {
@@ -484,7 +486,7 @@
   <header>
     <div class="header-content">
       <div class="logo-wrapper">
-        <img id="mainLogo" src="logo.png?v=4.0" alt="אוצר הספרים כרם ביבנה">
+        <img id="mainLogo" src="logo.png?v=5.0" alt="אוצר הספרים כרם ביבנה">
       </div>
       <h1>אוצר הספרים כרם ביבנה</h1>
       <p class="subtitle">ספרי קודש וייודאיקה • אוראל - 053-8218060</p>
@@ -635,7 +637,6 @@
       const grid = document.getElementById('booksGrid');
       grid.innerHTML = '';
 
-      // נבצע סינון תוך שמירה על האינדקס המקורי במערך הכללי
       let filteredWithIndex = allBooks.map((b, idx) => ({ book: b, originalIndex: idx }));
 
       if (selectedCategory !== 'הכל') {
