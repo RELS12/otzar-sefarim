@@ -603,13 +603,13 @@
       renderCatalog();
     }
 
-    /* פתיחת מודאל מוגדל ומפורט לספר */
-    function openBookDetails(bookId) {
-      const book = allBooks.find(b => b.id === bookId);
+    /* פתיחת מודאל מוגדל ומפורט לספר לפי אינדקס במערך */
+    function openBookDetails(index) {
+      const book = allBooks[index];
       if (!book) return;
 
       const imgWrap = document.getElementById('modalBookImg');
-      if (book.img) {
+      if (book.img && book.img.trim() !== '') {
         imgWrap.innerHTML = `<img src="${book.img}" alt="${book.name}">`;
       } else {
         imgWrap.innerHTML = `<span style="font-size: 5rem;">📖</span>`;
@@ -635,33 +635,36 @@
       const grid = document.getElementById('booksGrid');
       grid.innerHTML = '';
 
-      let filtered = allBooks;
+      // נבצע סינון תוך שמירה על האינדקס המקורי במערך הכללי
+      let filteredWithIndex = allBooks.map((b, idx) => ({ book: b, originalIndex: idx }));
 
       if (selectedCategory !== 'הכל') {
-        filtered = filtered.filter(b => b.category === selectedCategory);
+        filteredWithIndex = filteredWithIndex.filter(item => item.book.category === selectedCategory);
       }
 
       if (searchQuery) {
-        filtered = filtered.filter(b => 
-          (b.name && b.name.toLowerCase().includes(searchQuery)) ||
-          (b.desc && b.desc.toLowerCase().includes(searchQuery))
+        filteredWithIndex = filteredWithIndex.filter(item => 
+          (item.book.name && item.book.name.toLowerCase().includes(searchQuery)) ||
+          (item.book.desc && item.book.desc.toLowerCase().includes(searchQuery))
         );
       }
 
-      if (filtered.length === 0) {
+      if (filteredWithIndex.length === 0) {
         grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; color:#888; padding:45px; font-size:1.1rem;">לא נמצאו ספרים התואמים לחיפוש זה.</div>';
         return;
       }
 
-      filtered.forEach(b => {
+      filteredWithIndex.forEach(item => {
+        const b = item.book;
+        const idx = item.originalIndex;
         const msg = encodeURIComponent(`שלום, אני מעוניין לרכוש את הספר "${b.name}" במחיר ${b.price} ₪ מתוך אתר אוצר הספרים כרם ביבנה.`);
         const wa = `https://wa.me/${PHONE}?text=${msg}`;
 
         grid.innerHTML += `
-          <div class="book-card" onclick="openBookDetails('${b.id}')">
+          <div class="book-card" onclick="openBookDetails(${idx})">
             ${b.category ? `<span class="book-badge">${b.category}</span>` : ''}
             <div class="book-img">
-              ${b.img ? `<img src="${b.img}" onerror="this.parentElement.innerHTML='<span style=\\'font-size:3rem;\\'>📖</span>'">` : '<span style="font-size:3rem;">📖</span>'}
+              ${b.img && b.img.trim() !== '' ? `<img src="${b.img}" onerror="this.parentElement.innerHTML='<span style=\\'font-size:3rem;\\'>📖</span>'">` : '<span style="font-size:3rem;">📖</span>'}
             </div>
             <div class="book-details">
               <div class="book-title">${b.name}</div>
