@@ -110,20 +110,30 @@
       width: 100%;
     }
 
-    /* שורת חיפוש ספרים */
-    .search-container {
-      max-width: 550px;
+    /* שורת חיפוש ומיון */
+    .controls-wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      justify-content: center;
+      align-items: center;
+      max-width: 750px;
       margin: 0 auto 20px auto;
+    }
+
+    .search-container {
+      flex: 1;
+      min-width: 280px;
       position: relative;
     }
 
     .search-input {
       width: 100%;
-      padding: 13px 45px 13px 20px;
+      padding: 12px 45px 12px 20px;
       border-radius: 25px;
       border: 2px solid var(--secondary);
       background: #ffffff;
-      font-size: 1.05rem;
+      font-size: 1rem;
       color: var(--text);
       box-shadow: 0 4px 14px rgba(0,0,0,0.06);
       transition: all 0.2s ease;
@@ -141,8 +151,32 @@
       right: 16px;
       transform: translateY(-50%);
       color: var(--secondary);
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       pointer-events: none;
+    }
+
+    .sort-container {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .sort-select {
+      padding: 11px 16px;
+      border-radius: 20px;
+      border: 2px solid var(--secondary);
+      background: #ffffff;
+      font-family: inherit;
+      font-size: 0.95rem;
+      color: var(--primary);
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+    }
+
+    .sort-select:focus {
+      outline: none;
+      border-color: var(--primary);
     }
 
     /* סרגל סינון קטגוריות */
@@ -218,6 +252,20 @@
       z-index: 2;
     }
 
+    .book-tag {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #c93b2b;
+      color: #fff;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: bold;
+      z-index: 2;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+
     .book-img {
       width: 100%;
       height: 220px;
@@ -281,6 +329,7 @@
       align-items: center;
       border-top: 1px solid #f2ebe1;
       padding-top: 14px;
+      gap: 8px;
     }
 
     .book-price {
@@ -289,23 +338,47 @@
       color: var(--primary);
     }
 
+    .card-actions {
+      display: flex;
+      gap: 6px;
+    }
+
     .wa-link {
       background: var(--accent);
       color: #fff;
       text-decoration: none;
-      padding: 9px 15px;
+      padding: 8px 12px;
       border-radius: 6px;
       font-weight: bold;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 4px;
       box-shadow: 0 2px 8px rgba(37,211,102,0.3);
       transition: background 0.2s;
     }
 
     .wa-link:hover {
       background: #20bd5a;
+    }
+
+    .share-btn {
+      background: #f0e6d6;
+      color: var(--primary);
+      border: 1px solid var(--secondary);
+      padding: 8px 10px;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 0.8rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      transition: background 0.2s;
+    }
+
+    .share-btn:hover {
+      background: var(--secondary);
+      color: #fff;
     }
 
     /* מודאל פרטי ספר מוגדל */
@@ -414,6 +487,7 @@
       align-items: center;
       border-top: 1px solid #f2ebe1;
       padding-top: 15px;
+      gap: 10px;
     }
 
     .book-modal-price {
@@ -529,10 +603,20 @@
   </header>
 
   <main>
-    <!-- שורת חיפוש מהיר -->
-    <div class="search-container">
-      <span class="search-icon">🔍</span>
-      <input type="text" id="searchInput" class="search-input" placeholder="חיפוש לפי שם ספר, שם מחבר או תיאור..." oninput="handleSearch()">
+    <!-- שורת חיפוש ומיון -->
+    <div class="controls-wrapper">
+      <div class="search-container">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" class="search-input" placeholder="חיפוש לפי שם ספר, שם מחבר או תיאור..." oninput="handleSearch()">
+      </div>
+      <div class="sort-container">
+        <select id="sortSelect" class="sort-select" onchange="handleSort()">
+          <option value="newest">חדש ביותר</option>
+          <option value="price-asc">מחיר: מהזול ליקר</option>
+          <option value="price-desc">מחיר: מהיקר לזול</option>
+          <option value="name-asc">שם הספר (א-ת)</option>
+        </select>
+      </div>
     </div>
 
     <!-- סרגל סינון קטגוריות -->
@@ -558,7 +642,10 @@
         <div class="book-modal-desc" id="modalBookDesc"></div>
         <div class="book-modal-footer">
           <div class="book-modal-price" id="modalBookPrice"></div>
-          <a href="#" target="_blank" class="wa-link" id="modalBookWa" style="padding: 10px 20px; font-size: 1rem;">הזמנה בווצאפ</a>
+          <div style="display: flex; gap: 8px;">
+            <button class="share-btn" id="modalShareBtn" onclick="shareCurrentBook()">📲 שיתוף</button>
+            <a href="#" target="_blank" class="wa-link" id="modalBookWa" style="padding: 10px 18px; font-size: 1rem;">הזמנה בווצאפ</a>
+          </div>
         </div>
       </div>
     </div>
@@ -589,6 +676,8 @@
     let categories = [];
     let selectedCategory = "הכל";
     let searchQuery = "";
+    let currentSort = "newest";
+    let activeModalBook = null;
 
     async function fetchBooksFromGoogle() {
       const grid = document.getElementById('booksGrid');
@@ -598,7 +687,7 @@
         const response = await fetch(SCRIPT_URL);
         const data = await response.json();
         
-        allBooks = data.reverse(); 
+        allBooks = data; 
         
         const uniqueCats = new Set(allBooks.map(b => b.category).filter(c => c && c.trim() !== ''));
         categories = Array.from(uniqueCats);
@@ -613,6 +702,11 @@
 
     function handleSearch() {
       searchQuery = document.getElementById('searchInput').value.trim().toLowerCase();
+      renderCatalog();
+    }
+
+    function handleSort() {
+      currentSort = document.getElementById('sortSelect').value;
       renderCatalog();
     }
 
@@ -641,9 +735,39 @@
       renderCatalog();
     }
 
+    function shareBook(event, index) {
+      event.stopPropagation();
+      const book = allBooks[index];
+      if (!book) return;
+      const authorText = book.author ? ` מאת ${book.author}` : '';
+      const text = `ממליץ בחום על הספר "${book.name}"${authorText} במחיר ${book.price} ₪ מתוך אוצר הספרים כרם ביבנה!`;
+      
+      if (navigator.share) {
+        navigator.share({ title: book.name, text: text, url: window.location.href }).catch(() => {});
+      } else {
+        const wa = `https://wa.me/?text=${encodeURIComponent(text + " " + window.location.href)}`;
+        window.open(wa, '_blank');
+      }
+    }
+
+    function shareCurrentBook() {
+      if (!activeModalBook) return;
+      const book = activeModalBook;
+      const authorText = book.author ? ` מאת ${book.author}` : '';
+      const text = `ממליץ בחום על הספר "${book.name}"${authorText} במחיר ${book.price} ₪ מתוך אוצר הספרים כרם ביבנה!`;
+      
+      if (navigator.share) {
+        navigator.share({ title: book.name, text: text, url: window.location.href }).catch(() => {});
+      } else {
+        const wa = `https://wa.me/?text=${encodeURIComponent(text + " " + window.location.href)}`;
+        window.open(wa, '_blank');
+      }
+    }
+
     function openBookDetails(index) {
       const book = allBooks[index];
       if (!book) return;
+      activeModalBook = book;
 
       const imgWrap = document.getElementById('modalBookImg');
       if (book.img && book.img.trim() !== '') {
@@ -667,6 +791,7 @@
 
     function closeBookModal() {
       document.getElementById('bookDetailsModal').classList.remove('active');
+      activeModalBook = null;
     }
 
     function renderCatalog() {
@@ -687,6 +812,20 @@
         );
       }
 
+      // מיון
+      filteredWithIndex.sort((a, b) => {
+        if (currentSort === 'newest') {
+          return b.originalIndex - a.originalIndex;
+        } else if (currentSort === 'price-asc') {
+          return Number(a.book.price || 0) - Number(b.book.price || 0);
+        } else if (currentSort === 'price-desc') {
+          return Number(b.book.price || 0) - Number(a.book.price || 0);
+        } else if (currentSort === 'name-asc') {
+          return (a.book.name || '').localeCompare(b.book.name || '', 'he');
+        }
+        return 0;
+      });
+
       if (filteredWithIndex.length === 0) {
         grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; color:#888; padding:45px; font-size:1.1rem;">לא נמצאו ספרים התואמים לחיפוש זה.</div>';
         return;
@@ -702,6 +841,7 @@
         grid.innerHTML += `
           <div class="book-card" onclick="openBookDetails(${idx})">
             ${b.category ? `<span class="book-badge">${b.category}</span>` : ''}
+            ${b.tag && b.tag.trim() !== '' ? `<span class="book-tag">${b.tag}</span>` : ''}
             <div class="book-img">
               ${b.img && b.img.trim() !== '' ? `<img src="${b.img}" onerror="this.parentElement.innerHTML='<span style=\\'font-size:3rem;\\'>📖</span>'">` : '<span style="font-size:3rem;">📖</span>'}
             </div>
@@ -711,7 +851,10 @@
               <div class="book-desc">${b.desc || 'אין תיאור נוסף.'}</div>
               <div class="book-footer">
                 <div class="book-price">${b.price} ₪</div>
-                <a href="${wa}" target="_blank" class="wa-link" onclick="event.stopPropagation()">הזמנה בווצאפ</a>
+                <div class="card-actions">
+                  <button class="share-btn" onclick="shareBook(event, ${idx})" title="שתף ספר">📲</button>
+                  <a href="${wa}" target="_blank" class="wa-link" onclick="event.stopPropagation()">הזמנה</a>
+                </div>
               </div>
             </div>
           </div>
