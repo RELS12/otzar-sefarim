@@ -48,7 +48,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 16px;
+      gap: 12px;
     }
 
     .logo-wrapper {
@@ -81,12 +81,25 @@
       text-shadow: 1px 2px 4px rgba(0,0,0,0.4);
     }
 
-    .subtitle {
+    .subtitle-group {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      align-items: center;
+    }
+
+    .subtitle-main {
       color: #f0dfc8;
       font-size: 1.25rem;
       font-weight: 500;
       letter-spacing: 0.5px;
-      direction: rtl;
+    }
+
+    .subtitle-sub {
+      color: #ebd3bc;
+      font-size: 1.15rem;
+      font-weight: 400;
+      letter-spacing: 0.5px;
     }
 
     main {
@@ -508,7 +521,10 @@
         <img id="mainLogo" src="logo.png?v=5.0" alt="אוצר הספרים כרם ביבנה">
       </div>
       <h1>אוצר הספרים כרם ביבנה</h1>
-      <p class="subtitle">ספרי קודש וייודאיקה • אוראל - 053-8218060</p>
+      <div class="subtitle-group">
+        <div class="subtitle-main">ספרי קודש וייודאיקה</div>
+        <div class="subtitle-sub">אוראל - 053-8218060</div>
+      </div>
     </div>
   </header>
 
@@ -595,13 +611,11 @@
       }
     }
 
-    /* חיפוש מהיר מעודכן (כולל שם מחבר) */
     function handleSearch() {
       searchQuery = document.getElementById('searchInput').value.trim().toLowerCase();
       renderCatalog();
     }
 
-    /* קטגוריות */
     function renderCategoriesBar() {
       const bar = document.getElementById('categoriesBar');
       bar.innerHTML = '';
@@ -627,7 +641,6 @@
       renderCatalog();
     }
 
-    /* פתיחת מודאל מוגדל ומפורט לספר לפי אינדקס במערך */
     function openBookDetails(index) {
       const book = allBooks[index];
       if (!book) return;
@@ -656,7 +669,6 @@
       document.getElementById('bookDetailsModal').classList.remove('active');
     }
 
-    /* הצגת הקטלוג עם סינון וחיפוש (שם, מחבר, תיאור) */
     function renderCatalog() {
       const grid = document.getElementById('booksGrid');
       grid.innerHTML = '';
