@@ -228,18 +228,6 @@
       box-shadow: 0 0 0 2px rgba(184, 134, 59, 0.2);
     }
 
-    .file-input-wrapper {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-    }
-
-    .file-input-label {
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--primary);
-    }
-
     .btn-submit {
       background: linear-gradient(135deg, var(--secondary) 0%, #9e702c 100%);
       color: #fff;
@@ -411,24 +399,6 @@
     .wa-link:hover {
       background: #20bd5a;
     }
-
-    .del-btn {
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      background: #c93b2b;
-      color: #fff;
-      border: none;
-      border-radius: 50%;
-      width: 28px;
-      height: 28px;
-      cursor: pointer;
-      display: none;
-      font-weight: bold;
-      z-index: 3;
-    }
-
-    .admin-mode .del-btn { display: block; }
 
     /* מודאל פרטי ספר מוגדל */
     .modal-overlay {
@@ -668,12 +638,8 @@
         <div class="form-grid">
           <input type="text" id="bName" placeholder="שם הספר *" required>
           <input type="number" id="bPrice" placeholder="מחיר (₪) *" required>
-          <select id="bCategory" required>
-          </select>
-          <div class="file-input-wrapper">
-            <span class="file-input-label">העלה תמונה מהמכשיר:</span>
-            <input type="file" id="bFileInput" accept="image/*" onchange="previewBookFile(event)">
-          </div>
+          <select id="bCategory" required></select>
+          <input type="url" id="bImgUrl" placeholder="קישור לתמונה באינטרנט (אופציונלי)">
         </div>
         <textarea id="bDesc" rows="2" placeholder="תיאור הספר (הוצאה, כרכים, מצב הספר)..." style="margin-bottom:12px;"></textarea>
         <button type="submit" class="btn-submit">➕ הוסף ספר</button>
@@ -753,6 +719,7 @@
   </footer>
 
   <script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxvABYTrObkFP1LpMgRew80qzswkINAXTXRgpp12xHMqvZqlbBLMtUA5479gVm4EEdjgw/exec";
     const PHONE = "972538218060";
     let allBooks = [];
     let categories = [];
@@ -760,28 +727,8 @@
     let searchQuery = "";
     let isAdmin = false;
     let adminPass = "2468";
-    let currentUploadedImageBase64 = "";
 
     const defaultCategories = ["ש\"ס ופוסקים", "מחשבה ומוסר", "תנ\"ך ופירושים", "ספרי ילדים", "יודאיקה ותשמישי קדושה"];
-
-    const initialBooks = [
-      {
-        id: "1",
-        name: "שו״ת יביע אומר (סט)",
-        price: 340,
-        category: "ש\"ס ופוסקים",
-        desc: "סט שלם במצב חדש, כריכה קשה ומהודרת, אותיות מאירות עיניים.",
-        img: ""
-      },
-      {
-        id: "2",
-        name: "משנה ברורה ברור ומאיר",
-        price: 90,
-        category: "ש\"ס ופוסקים",
-        desc: "כרך בודד על הלכות תפילה, כולל ביאורים והערות מעשיות.",
-        img: ""
-      }
-    ];
 
     function initData() {
       const savedPass = localStorage.getItem('kb_admin_pass');
@@ -795,17 +742,27 @@
         localStorage.setItem('kb_categories', JSON.stringify(categories));
       }
 
-      const savedBooks = localStorage.getItem('kb_books');
-      if (savedBooks) {
-        allBooks = JSON.parse(savedBooks);
-      } else {
-        allBooks = initialBooks;
-        localStorage.setItem('kb_books', JSON.stringify(allBooks));
-      }
-
       renderCategoriesBar();
       updateCategorySelectOptions();
-      renderCatalog();
+      
+      // משיכת הספרים ישירות מגוגל שיטס
+      fetchBooksFromGoogle();
+    }
+    
+    async function fetchBooksFromGoogle() {
+      const grid = document.getElementById('booksGrid');
+      grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:45px; font-size:1.2rem; color:var(--primary);">טוען ספרים מהקטלוג... ⏳</div>';
+      
+      try {
+        const response = await fetch(SCRIPT_URL);
+        const data = await response.json();
+        // הפיכת המערך כדי שהספרים החדשים ביותר יופיעו למעלה
+        allBooks = data.reverse(); 
+        renderCatalog();
+      } catch (error) {
+        console.error("Error loading books:", error);
+        grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; color:#c93b2b; padding:45px;">שגיאה בטעינת הספרים. אנא רענן את העמוד.</div>';
+      }
     }
 
     /* חיפוש */
@@ -933,16 +890,6 @@
       renderCatalog();
     }
 
-    function previewBookFile(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = function(evt) {
-        currentUploadedImageBase64 = evt.target.result;
-      };
-      reader.readAsDataURL(file);
-    }
-
     /* פתיחת מודאל מוגדל ומפורט לספר */
     function openBookDetails(bookId) {
       const book = allBooks.find(b => b.id === bookId);
@@ -1000,7 +947,6 @@
         grid.innerHTML += `
           <div class="book-card" onclick="openBookDetails('${b.id}')">
             ${b.category ? `<span class="book-badge">${b.category}</span>` : ''}
-            ${isAdmin ? `<button class="del-btn" onclick="event.stopPropagation(); delBook('${b.id}')" title="מחק ספר">✕</button>` : ''}
             <div class="book-img">
               ${b.img ? `<img src="${b.img}" onerror="this.parentElement.innerHTML='<span style=\\'font-size:3rem;\\'>📖</span>'">` : '<span style="font-size:3rem;">📖</span>'}
             </div>
@@ -1017,12 +963,14 @@
       });
     }
 
+    // הוספת ספר לגוגל שיטס
     function addBook(e) {
       e.preventDefault();
       const name = document.getElementById('bName').value.trim();
       const price = document.getElementById('bPrice').value.trim();
       const category = document.getElementById('bCategory').value;
       const desc = document.getElementById('bDesc').value.trim();
+      const img = document.getElementById('bImgUrl').value.trim(); // מקבלים קישור אינטרנטי
 
       if (!name || !price || !category) {
         alert('נא למלא את כל שדות החובה');
@@ -1031,27 +979,30 @@
 
       const newB = {
         id: Date.now().toString(),
-        name,
-        price,
-        category,
-        img: currentUploadedImageBase64,
-        desc
+        name: name,
+        price: price,
+        category: category,
+        img: img,
+        desc: desc
       };
 
+      // הוספה מיידית לתצוגה בשביל מהירות
       allBooks.unshift(newB);
-      localStorage.setItem('kb_books', JSON.stringify(allBooks));
-      currentUploadedImageBase64 = "";
-      document.getElementById('bFileInput').value = '';
       renderCatalog();
-      alert('הספר נוסף בהצלחה לקטלוג!');
+      alert('הספר נשמר באתר ומועבר כעת לגיבוי בגוגל שיטס!');
       e.target.reset();
-    }
 
-    function delBook(id) {
-      if (!confirm('האם אתה בטוח שברצונך למחוק ספר זה?')) return;
-      allBooks = allBooks.filter(b => b.id !== id);
-      localStorage.setItem('kb_books', JSON.stringify(allBooks));
-      renderCatalog();
+      // שליחת הנתונים לגוגל שיטס מאחורי הקלעים
+      fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {
+          'Content-Type': 'text/plain',
+        },
+        body: JSON.stringify(newB)
+      }).catch(err => {
+        console.error("שגיאה בשמירה לגיליון:", err);
+      });
     }
 
     initData();
