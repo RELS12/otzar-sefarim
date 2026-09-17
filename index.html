@@ -238,8 +238,15 @@
       font-family: 'Frank Ruhl Libre', serif;
       font-size: 1.35rem;
       color: var(--primary);
-      margin-bottom: 6px;
+      margin-bottom: 4px;
       font-weight: 900;
+    }
+
+    .book-author {
+      font-size: 0.9rem;
+      color: var(--secondary);
+      font-weight: 600;
+      margin-bottom: 8px;
     }
 
     .book-desc {
@@ -346,12 +353,24 @@
       margin-bottom: 12px;
     }
 
+    .book-modal-title-area {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
     .book-modal-title {
       font-family: 'Frank Ruhl Libre', serif;
       font-size: 1.8rem;
       color: var(--primary);
       font-weight: 900;
       line-height: 1.2;
+    }
+
+    .book-modal-author {
+      font-size: 1.1rem;
+      color: var(--secondary);
+      font-weight: 600;
     }
 
     .book-modal-badge {
@@ -497,7 +516,7 @@
     <!-- שורת חיפוש מהיר -->
     <div class="search-container">
       <span class="search-icon">🔍</span>
-      <input type="text" id="searchInput" class="search-input" placeholder="חיפוש ספר לפי שם או תיאור..." oninput="handleSearch()">
+      <input type="text" id="searchInput" class="search-input" placeholder="חיפוש לפי שם ספר, שם מחבר או תיאור..." oninput="handleSearch()">
     </div>
 
     <!-- סרגל סינון קטגוריות -->
@@ -514,7 +533,10 @@
       <div class="book-modal-img-wrap" id="modalBookImg"></div>
       <div class="book-modal-content">
         <div class="book-modal-header">
-          <div class="book-modal-title" id="modalBookTitle"></div>
+          <div class="book-modal-title-area">
+            <div class="book-modal-title" id="modalBookTitle"></div>
+            <div class="book-modal-author" id="modalBookAuthor"></div>
+          </div>
           <div class="book-modal-badge" id="modalBookBadge"></div>
         </div>
         <div class="book-modal-desc" id="modalBookDesc"></div>
@@ -527,7 +549,7 @@
   </div>
 
   <!-- כפתור ווצאפ צף -->
-  <a href="https://wa.me/972538218060?text=%D7%A9%D7%9C%D7%95%D7%9D%2C%20%D7%9C%D7%90%20%D7%9E%D7%A6%D7%90%D7%AA%D7%99%20%D7%91%D7%90%D7%AA%D7%A8%20%D7%90%D7%AA%20%D7%94%D7%A1%D7%A4%D7%A5%20%D7%A9%D7%90%D7%A0%D7%99%20%D7%9E%D7%97%D7%A4%D7%A9.%20%D7%94%D7%90%D7%9D%20%D7%90%D7%A4%D7%A9%D7%A8%20%D7%9C%D7%94%D7%96%D7%99%D7%9F%3A%20" 
+  <a href="https://wa.me/972538218060?text=%D7%A9%D7%9C%D7%95%D7%9D%2C%20%D7%9C%D7%90%20%D7%9E%D7%A6%D7%90%D7%AA%D7%99%20%D7%91%D7%90%D7%AA%20%D7%90%D7%AA%20%D7%94%D7%A1%D7%A4%D7%A8%20%D7%A9%D7%90%D7%A0%D7%99%20%D7%9E%D7%97%D7%A4%D7%A9.%20%D7%94%D7%90%D7%9D%20%D7%90%D7%A4%D7%A9%D7%A8%20%D7%9C%D7%94%D7%96%D7%9E%D7%99%D7%9F%3A%20" 
      target="_blank" 
      rel="noopener noreferrer" 
      class="floating-whatsapp" 
@@ -573,7 +595,7 @@
       }
     }
 
-    /* חיפוש */
+    /* חיפוש מהיר מעודכן (כולל שם מחבר) */
     function handleSearch() {
       searchQuery = document.getElementById('searchInput').value.trim().toLowerCase();
       renderCatalog();
@@ -618,11 +640,13 @@
       }
 
       document.getElementById('modalBookTitle').textContent = book.name;
+      document.getElementById('modalBookAuthor').textContent = book.author ? `מחבר: ${book.author}` : '';
       document.getElementById('modalBookBadge').textContent = book.category || 'ספרי קודש';
       document.getElementById('modalBookDesc').textContent = book.desc || 'אין תיאור נוסף עבור ספר זה.';
       document.getElementById('modalBookPrice').textContent = `${book.price} ₪`;
 
-      const msg = encodeURIComponent(`שלום, אני מעוניין לרכוש את הספר "${book.name}" במחיר ${book.price} ₪ מתוך אתר אוצר הספרים כרם ביבנה.`);
+      const authorText = book.author ? ` מאת ${book.author}` : '';
+      const msg = encodeURIComponent(`שלום, אני מעוניין לרכוש את הספר "${book.name}"${authorText} במחיר ${book.price} ₪ מתוך אתר אוצר הספרים כרם ביבנה.`);
       document.getElementById('modalBookWa').href = `https://wa.me/${PHONE}?text=${msg}`;
 
       document.getElementById('bookDetailsModal').classList.add('active');
@@ -632,7 +656,7 @@
       document.getElementById('bookDetailsModal').classList.remove('active');
     }
 
-    /* הצגת הקטלוג עם סינון וחיפוש */
+    /* הצגת הקטלוג עם סינון וחיפוש (שם, מחבר, תיאור) */
     function renderCatalog() {
       const grid = document.getElementById('booksGrid');
       grid.innerHTML = '';
@@ -646,6 +670,7 @@
       if (searchQuery) {
         filteredWithIndex = filteredWithIndex.filter(item => 
           (item.book.name && item.book.name.toLowerCase().includes(searchQuery)) ||
+          (item.book.author && item.book.author.toLowerCase().includes(searchQuery)) ||
           (item.book.desc && item.book.desc.toLowerCase().includes(searchQuery))
         );
       }
@@ -658,7 +683,8 @@
       filteredWithIndex.forEach(item => {
         const b = item.book;
         const idx = item.originalIndex;
-        const msg = encodeURIComponent(`שלום, אני מעוניין לרכוש את הספר "${b.name}" במחיר ${b.price} ₪ מתוך אתר אוצר הספרים כרם ביבנה.`);
+        const authorText = b.author ? ` מאת ${b.author}` : '';
+        const msg = encodeURIComponent(`שלום, אני מעוניין לרכוש את הספר "${b.name}"${authorText} במחיר ${b.price} ₪ מתוך אתר אוצר הספרים כרם ביבנה.`);
         const wa = `https://wa.me/${PHONE}?text=${msg}`;
 
         grid.innerHTML += `
@@ -669,6 +695,7 @@
             </div>
             <div class="book-details">
               <div class="book-title">${b.name}</div>
+              <div class="book-author">${b.author ? `מחבר: ${b.author}` : '&nbsp;'}</div>
               <div class="book-desc">${b.desc || 'אין תיאור נוסף.'}</div>
               <div class="book-footer">
                 <div class="book-price">${b.price} ₪</div>
