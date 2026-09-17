@@ -525,7 +525,7 @@
   </div>
 
   <!-- כפתור ווצאפ צף -->
-  <a href="https://wa.me/972538218060?text=%D7%A9%D7%9C%D7%95%D7%9D%2C%20%D7%9C%D7%90%20%D7%9E%D7%A6%D7%90%D7%AA%D7%99%20%D7%91%D7%90%D7%AA%D7%A8%20%D7%90%D7%AA%20%D7%94%D7%A1%D7%A4%D7%A8%20%D7%A9%D7%90%D7%A0%D7%99%20%D7%9E%D7%97%D7%A4%D7%A9.%20%D7%94%D7%90%D7%9D%20%D7%90%D7%A4%D7%A9%D7%A8%20%D7%9C%D7%94%D7%96%D7%99%D7%9F%3A%20" 
+  <a href="https://wa.me/972538218060?text=%D7%A9%D7%9C%D7%95%D7%9D%2C%20%D7%9C%D7%90%20%D7%9E%D7%A6%D7%90%D7%AA%D7%99%20%D7%91%D7%90%D7%AA%D7%A8%20%D7%90%D7%AA%20%D7%94%D7%A1%D7%A4%D7%A5%20%D7%A9%D7%90%D7%A0%D7%99%20%D7%9E%D7%97%D7%A4%D7%A9.%20%D7%94%D7%90%D7%9D%20%D7%90%D7%A4%D7%A9%D7%A8%20%D7%9C%D7%94%D7%96%D7%99%D7%9F%3A%20" 
      target="_blank" 
      rel="noopener noreferrer" 
      class="floating-whatsapp" 
@@ -558,10 +558,8 @@
         const response = await fetch(SCRIPT_URL);
         const data = await response.json();
         
-        // הפיכת המערך כדי שהספרים החדשים ביותר יופיעו למעלה
         allBooks = data.reverse(); 
         
-        // חילוץ אוטומטי של הקטגוריות מתוך גוגל שיטס
         const uniqueCats = new Set(allBooks.map(b => b.category).filter(c => c && c.trim() !== ''));
         categories = Array.from(uniqueCats);
         
@@ -678,7 +676,6 @@
       });
     }
 
-    // קריאה לפונקציה בעת טעינת העמוד
     fetchBooksFromGoogle();
   </script>
 </body>
