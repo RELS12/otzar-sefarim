@@ -42,6 +42,17 @@
       box-shadow: 0 4px 20px rgba(0,0,0,0.25);
     }
 
+    /* בס"ד בפינה הימנית העליונה */
+    .bsd-badge {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      color: #f0dfc8;
+      font-weight: 600;
+      font-size: 1.05rem;
+      letter-spacing: 0.5px;
+    }
+
     .header-content {
       max-width: 850px;
       margin: 0 auto;
@@ -136,15 +147,19 @@
       width: 100%;
     }
 
-    /* שורת חיפוש, מיון וסינון מחיר דינמי */
+    /* אזור בקרה וחיפוש משודרג */
     .controls-wrapper {
       display: flex;
-      flex-wrap: wrap;
+      flex-direction: column;
       gap: 15px;
-      justify-content: center;
-      align-items: center;
-      max-width: 900px;
-      margin: 0 auto 20px auto;
+      max-width: 850px;
+      margin: 0 auto 25px auto;
+    }
+
+    .search-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
     }
 
     .search-container {
@@ -181,20 +196,30 @@
       pointer-events: none;
     }
 
+    .filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      justify-content: space-between;
+      align-items: center;
+      background: #ffffff;
+      padding: 12px 20px;
+      border-radius: 16px;
+      border: 2px solid var(--border);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.04);
+    }
+
     .sort-container, .price-filter-container, .view-mode-container {
       display: flex;
       align-items: center;
       gap: 8px;
-      background: #ffffff;
-      padding: 8px 16px;
-      border-radius: 20px;
-      border: 2px solid var(--secondary);
-      box-shadow: 0 4px 14px rgba(0,0,0,0.06);
     }
 
     .sort-select {
-      border: none;
-      background: transparent;
+      border: 1px solid var(--secondary);
+      background: #fff;
+      padding: 6px 12px;
+      border-radius: 14px;
       font-family: inherit;
       font-size: 0.95rem;
       color: var(--primary);
@@ -204,7 +229,7 @@
     }
 
     .price-filter-container label {
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       font-weight: 600;
       color: var(--primary);
     }
@@ -212,22 +237,24 @@
     .price-filter-container input[type="range"] {
       cursor: pointer;
       accent-color: var(--primary);
+      width: 130px;
     }
 
     .view-btn {
-      background: transparent;
-      border: none;
+      background: #f2ebe1;
+      border: 1px solid var(--secondary);
       cursor: pointer;
-      font-size: 1.1rem;
-      padding: 2px 6px;
-      border-radius: 6px;
-      color: var(--text-muted);
-      transition: color 0.2s, background 0.2s;
+      font-size: 1rem;
+      padding: 6px 10px;
+      border-radius: 8px;
+      color: var(--primary);
+      transition: background 0.2s, color 0.2s;
     }
 
     .view-btn.active {
       background: var(--primary);
       color: #fff;
+      border-color: var(--primary);
     }
 
     /* סרגל סינון קטגוריות */
@@ -890,6 +917,7 @@
 <body>
 
   <header>
+    <div class="bsd-badge">בס"ד</div>
     <button class="cart-badge-btn" onclick="openCartModal()">
       🛒 סל קניות <span id="cartCountBadge" style="background:#fff; color:var(--primary); padding:2px 7px; border-radius:10px; font-size:0.85rem;">0</span>
     </button>
@@ -906,30 +934,35 @@
   </header>
 
   <main>
-    <!-- שורת חיפוש, מיון, סינון מחיר דינמי וכפתורי תצוגה -->
+    <!-- אזור החיפוש והפקדים המסודר -->
     <div class="controls-wrapper">
-      <div class="search-container">
-        <span class="search-icon">🔍</span>
-        <input type="text" id="searchInput" class="search-input" placeholder="חיפוש לפי שם ספר, שם מחבר או תיאור..." oninput="handleSearch()">
-      </div>
-      
-      <div class="sort-container">
-        <select id="sortSelect" class="sort-select" onchange="handleSort()">
-          <option value="newest">חדש ביותר</option>
-          <option value="price-asc">מחיר: מהזול ליקר</option>
-          <option value="price-desc">מחיר: מהיקר לזול</option>
-          <option value="name-asc">שם הספר (א-ת)</option>
-        </select>
+      <div class="search-row">
+        <div class="search-container">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="searchInput" class="search-input" placeholder="חיפוש לפי שם ספר, שם מחבר או תיאור..." oninput="handleSearch()">
+        </div>
       </div>
 
-      <div class="price-filter-container">
-        <label for="priceRange">עד מחיר: <span id="priceVal">הכל</span> ₪</label>
-        <input type="range" id="priceRange" min="0" max="500" value="500" oninput="handlePriceFilter()">
-      </div>
+      <div class="filter-row">
+        <div class="sort-container">
+          <label style="font-size:0.9rem; font-weight:600; color:var(--primary);">מיון:</label>
+          <select id="sortSelect" class="sort-select" onchange="handleSort()">
+            <option value="newest">חדש ביותר</option>
+            <option value="price-asc">מחיר: מהזול ליקר</option>
+            <option value="price-desc">מחיר: מהיקר לזול</option>
+            <option value="name-asc">שם הספר (א-ת)</option>
+          </select>
+        </div>
 
-      <div class="view-mode-container">
-        <button class="view-btn active" id="gridViewBtn" onclick="setViewMode('grid')" title="תצוגת רשת">🖼️</button>
-        <button class="view-btn" id="listViewBtn" onclick="setViewMode('list')" title="תצוגת רשימה">☰</button>
+        <div class="price-filter-container">
+          <label for="priceRange">עד מחיר: <span id="priceVal">הכל</span> ₪</label>
+          <input type="range" id="priceRange" min="0" max="500" value="500" oninput="handlePriceFilter()">
+        </div>
+
+        <div class="view-mode-container">
+          <button class="view-btn active" id="gridViewBtn" onclick="setViewMode('grid')" title="תצוגת רשת">🖼️ רשת</button>
+          <button class="view-btn" id="listViewBtn" onclick="setViewMode('list')" title="תצוגת רשימה">☰ רשימה</button>
+        </div>
       </div>
     </div>
 
@@ -1129,7 +1162,6 @@
       }, 2500);
     }
 
-    /* שמירה וטעינת עגלה מהזיכרון בדפדפן */
     function saveCartToStorage() {
       localStorage.setItem('otzar_cart', JSON.stringify(cart));
     }
