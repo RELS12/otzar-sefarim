@@ -136,20 +136,20 @@
       width: 100%;
     }
 
-    /* שורת חיפוש ומיון */
+    /* שורת חיפוש, מיון וסינון מחיר דינמי */
     .controls-wrapper {
       display: flex;
       flex-wrap: wrap;
       gap: 15px;
       justify-content: center;
       align-items: center;
-      max-width: 750px;
+      max-width: 850px;
       margin: 0 auto 20px auto;
     }
 
     .search-container {
       flex: 1;
-      min-width: 280px;
+      min-width: 260px;
       position: relative;
     }
 
@@ -181,28 +181,37 @@
       pointer-events: none;
     }
 
-    .sort-container {
+    .sort-container, .price-filter-container {
       display: flex;
       align-items: center;
       gap: 8px;
+      background: #ffffff;
+      padding: 8px 16px;
+      border-radius: 20px;
+      border: 2px solid var(--secondary);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.06);
     }
 
     .sort-select {
-      padding: 11px 16px;
-      border-radius: 20px;
-      border: 2px solid var(--secondary);
-      background: #ffffff;
+      border: none;
+      background: transparent;
       font-family: inherit;
       font-size: 0.95rem;
       color: var(--primary);
       font-weight: 600;
       cursor: pointer;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+      outline: none;
     }
 
-    .sort-select:focus {
-      outline: none;
-      border-color: var(--primary);
+    .price-filter-container label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    .price-filter-container input[type="range"] {
+      cursor: pointer;
+      accent-color: var(--primary);
     }
 
     /* סרגל סינון קטגוריות */
@@ -545,7 +554,7 @@
       background: rgba(0,0,0,0.8);
     }
 
-    /* מודאל סל קניות (כולל תמונות ספרים) */
+    /* מודאל סל קניות */
     .cart-modal-box {
       background: #ffffff;
       border-radius: 16px;
@@ -801,12 +810,13 @@
   </header>
 
   <main>
-    <!-- שורת חיפוש ומיון -->
+    <!-- שורת חיפוש, מיון וסינון מחיר דינמי -->
     <div class="controls-wrapper">
       <div class="search-container">
         <span class="search-icon">🔍</span>
         <input type="text" id="searchInput" class="search-input" placeholder="חיפוש לפי שם ספר, שם מחבר או תיאור..." oninput="handleSearch()">
       </div>
+      
       <div class="sort-container">
         <select id="sortSelect" class="sort-select" onchange="handleSort()">
           <option value="newest">חדש ביותר</option>
@@ -814,6 +824,11 @@
           <option value="price-desc">מחיר: מהיקר לזול</option>
           <option value="name-asc">שם הספר (א-ת)</option>
         </select>
+      </div>
+
+      <div class="price-filter-container">
+        <label for="priceRange">עד מחיר: <span id="priceVal">הכל</span> ₪</label>
+        <input type="range" id="priceRange" min="0" max="500" value="500" oninput="handlePriceFilter()">
       </div>
     </div>
 
@@ -894,6 +909,7 @@
     let selectedCategory = "הכל";
     let searchQuery = "";
     let currentSort = "newest";
+    let maxPriceLimit = 9999;
     let activeModalBook = null;
     let cart = [];
 
@@ -909,12 +925,41 @@
         const uniqueCats = new Set(allBooks.map(b => b.category).filter(c => c && c.trim() !== ''));
         categories = Array.from(uniqueCats);
         
+        setupPriceSlider();
         renderCategoriesBar();
         renderCatalog();
       } catch (error) {
         console.error("Error loading books:", error);
         grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; color:#c93b2b; padding:45px;">שגיאה בטעינת הספרים. אנא רענן את העמוד.</div>';
       }
+    }
+
+    function setupPriceSlider() {
+      if (allBooks.length === 0) return;
+      const prices = allBooks.map(b => Number(b.price || 0));
+      const highestPrice = Math.max(...prices);
+      
+      const slider = document.getElementById('priceRange');
+      slider.max = highestPrice;
+      slider.value = highestPrice;
+      maxPriceLimit = highestPrice;
+      document.getElementById('priceVal').textContent = highestPrice;
+    }
+
+    function handlePriceFilter() {
+      const slider = document.getElementById('priceRange');
+      const val = Number(slider.value);
+      maxPriceLimit = val;
+      
+      const prices = allBooks.map(b => Number(b.price || 0));
+      const highestPrice = Math.max(...prices);
+
+      if (val >= highestPrice) {
+        document.getElementById('priceVal').textContent = 'הכל';
+      } else {
+        document.getElementById('priceVal').textContent = val;
+      }
+      renderCatalog();
     }
 
     function handleSearch() {
@@ -952,7 +997,6 @@
       renderCatalog();
     }
 
-    /* הצגת Toast חלקה בהוספה לעגלה */
     function showToast(message) {
       const toast = document.getElementById('toastNotification');
       toast.textContent = message;
@@ -1146,6 +1190,13 @@
         );
       }
 
+      // סינון לפי סרגל מחיר דינמי
+      const pricesArray = allBooks.map(b => Number(b.price || 0));
+      const highestPrice = pricesArray.length ? Math.max(...pricesArray) : 500;
+      if (maxPriceLimit < highestPrice) {
+        filteredWithIndex = filteredWithIndex.filter(item => Number(item.book.price || 0) <= maxPriceLimit);
+      }
+
       // מיון
       filteredWithIndex.sort((a, b) => {
         if (currentSort === 'newest') {
@@ -1161,7 +1212,7 @@
       });
 
       if (filteredWithIndex.length === 0) {
-        grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; color:#888; padding:45px; font-size:1.1rem;">לא נמצאו ספרים התואמים לחיפוש זה.</div>';
+        grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; color:#888; padding:45px; font-size:1.1rem;">לא נמצאו ספרים התואמים לסינון זה.</div>';
         return;
       }
 
