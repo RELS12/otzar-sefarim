@@ -102,6 +102,32 @@
       letter-spacing: 0.5px;
     }
 
+    /* כפתור עגלת קניות עליון */
+    .cart-badge-btn {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: var(--secondary);
+      color: #fff;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 25px;
+      font-weight: bold;
+      font-size: 0.95rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      transition: transform 0.2s, background 0.2s;
+      z-index: 100;
+    }
+
+    .cart-badge-btn:hover {
+      background: #a37331;
+      transform: scale(1.05);
+    }
+
     main {
       flex: 1;
       max-width: 1100px;
@@ -329,7 +355,7 @@
       align-items: center;
       border-top: 1px solid #f2ebe1;
       padding-top: 14px;
-      gap: 8px;
+      gap: 6px;
     }
 
     .book-price {
@@ -340,33 +366,33 @@
 
     .card-actions {
       display: flex;
-      gap: 6px;
+      gap: 4px;
     }
 
-    .wa-link {
-      background: var(--accent);
+    .cart-btn {
+      background: var(--primary);
       color: #fff;
-      text-decoration: none;
-      padding: 8px 12px;
+      border: none;
+      padding: 7px 10px;
       border-radius: 6px;
       font-weight: bold;
       font-size: 0.8rem;
+      cursor: pointer;
       display: inline-flex;
       align-items: center;
       gap: 4px;
-      box-shadow: 0 2px 8px rgba(37,211,102,0.3);
       transition: background 0.2s;
     }
 
-    .wa-link:hover {
-      background: #20bd5a;
+    .cart-btn:hover {
+      background: #571622;
     }
 
     .share-btn {
       background: #f0e6d6;
       color: var(--primary);
       border: 1px solid var(--secondary);
-      padding: 8px 10px;
+      padding: 7px 9px;
       border-radius: 6px;
       font-weight: bold;
       font-size: 0.8rem;
@@ -519,6 +545,130 @@
       background: rgba(0,0,0,0.8);
     }
 
+    /* מודאל סל קניות */
+    .cart-modal-box {
+      background: #ffffff;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 550px;
+      max-height: 85vh;
+      overflow-y: auto;
+      box-shadow: 0 12px 36px rgba(0,0,0,0.3);
+      position: relative;
+      padding: 25px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .cart-modal-box h2 {
+      font-family: 'Frank Ruhl Libre', serif;
+      color: var(--primary);
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+      border-bottom: 2px solid var(--secondary);
+      padding-bottom: 10px;
+    }
+
+    .cart-items-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 20px;
+      max-height: 40vh;
+      overflow-y: auto;
+    }
+
+    .cart-item-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #fdfaf6;
+      border: 1px solid #e8decb;
+      padding: 10px 14px;
+      border-radius: 8px;
+    }
+
+    .cart-item-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .cart-item-title {
+      font-weight: bold;
+      color: var(--primary);
+      font-size: 1.05rem;
+    }
+
+    .cart-item-price {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .cart-item-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .qty-btn {
+      background: var(--secondary);
+      color: #fff;
+      border: none;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .remove-item-btn {
+      background: none;
+      border: none;
+      color: #c93b2b;
+      cursor: pointer;
+      font-size: 1.1rem;
+      margin-right: 5px;
+    }
+
+    .cart-summary {
+      border-top: 2px solid #f2ebe1;
+      padding-top: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: var(--primary);
+    }
+
+    .btn-checkout {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 14px;
+      border-radius: 10px;
+      font-weight: bold;
+      font-size: 1.1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 14px rgba(37,211,102,0.4);
+      transition: background 0.2s;
+      text-decoration: none;
+      text-align: center;
+    }
+
+    .btn-checkout:hover {
+      background: #20bd5a;
+    }
+
     /* כפתור ווצאפ צף */
     .floating-whatsapp {
       position: fixed;
@@ -590,6 +740,9 @@
 <body>
 
   <header>
+    <button class="cart-badge-btn" onclick="openCartModal()">
+      🛒 סל קניות <span id="cartCountBadge" style="background:#fff; color:var(--primary); padding:2px 7px; border-radius:10px; font-size:0.85rem;">0</span>
+    </button>
     <div class="header-content">
       <div class="logo-wrapper">
         <img id="mainLogo" src="logo.png?v=5.0" alt="אוצר הספרים כרם ביבנה">
@@ -643,16 +796,34 @@
         <div class="book-modal-footer">
           <div class="book-modal-price" id="modalBookPrice"></div>
           <div style="display: flex; gap: 8px;">
-            <button class="share-btn" id="modalShareBtn" onclick="shareCurrentBook()">📲 שיתוף</button>
-            <a href="#" target="_blank" class="wa-link" id="modalBookWa" style="padding: 10px 18px; font-size: 1rem;">הזמנה בווצאפ</a>
+            <button class="share-btn" onclick="shareCurrentBook()">📲 שיתוף</button>
+            <button class="cart-btn" id="modalAddToCartBtn" style="padding: 10px 16px; font-size: 0.95rem;">🛒 הוסף לעגלה</button>
           </div>
         </div>
       </div>
     </div>
   </div>
 
+  <!-- מודאל עגלת קניות -->
+  <div class="modal-overlay" id="cartModal" onclick="closeCartModal(event)">
+    <div class="cart-modal-box" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="closeCartModal()">✕</button>
+      <h2>סל הקניות שלך</h2>
+      <div class="cart-items-list" id="cartItemsList">
+        <!-- פריטים יטענו דינמית -->
+      </div>
+      <div class="cart-summary">
+        <span>סה״כ לתשלום:</span>
+        <span id="cartTotalPrice">0 ₪</span>
+      </div>
+      <a href="#" target="_blank" class="btn-checkout" id="checkoutWaBtn" onclick="checkoutWhatsApp()">
+        📲 שליחת הזמנה מסודרת בווצאפ
+      </a>
+    </div>
+  </div>
+
   <!-- כפתור ווצאפ צף -->
-  <a href="https://wa.me/972538218060?text=%D7%A9%D7%9C%D7%95%D7%9D%2C%20%D7%9C%D7%90%20%D7%9E%D7%A6%D7%90%D7%AA%D7%99%20%D7%91%D7%90%D7%AA%20%D7%90%D7%AA%20%D7%94%D7%A1%D7%A4%D7%A8%20%D7%A9%D7%90%D7%A0%D7%99%20%D7%9E%D7%97%D7%A4%D7%A9.%20%D7%94%D7%90%D7%9D%20%D7%90%D7%A4%D7%A9%D7%A8%20%D7%9C%D7%94%D7%96%D7%9E%D7%99%D7%9F%3A%20" 
+  <a href="https://wa.me/972538218060?text=%D7%A9%D7%9C%D7%95%D7%9D%2C%20%D7%9C%D7%90%20%D7%9E%20%D7%A6%D7%90%D7%AA%D7%99%20%D7%91%D7%90%D7%AA%20%D7%90%D7%AA%20%D7%94%D7%A1%D7%A4%D7%A8%20%D7%A9%D7%90%D7%A0%D7%99%20%D7%9E%2C%20%D7%90%D7%A4%D7%A9%D7%A8%20%D7%9C%D7%94%D7%96%D7%9E%D7%99%D7%9F%3A%20" 
      target="_blank" 
      rel="noopener noreferrer" 
      class="floating-whatsapp" 
@@ -678,6 +849,7 @@
     let searchQuery = "";
     let currentSort = "newest";
     let activeModalBook = null;
+    let cart = [];
 
     async function fetchBooksFromGoogle() {
       const grid = document.getElementById('booksGrid');
@@ -735,6 +907,117 @@
       renderCatalog();
     }
 
+    /* ניהול עגלת קניות */
+    function addToCart(event, index) {
+      if (event) event.stopPropagation();
+      const book = allBooks[index];
+      if (!book) return;
+
+      const existing = cart.find(item => item.book.name === book.name);
+      if (existing) {
+        existing.qty += 1;
+      } else {
+        cart.push({ book: book, qty: 1 });
+      }
+      updateCartBadge();
+      alert(`הספר "${book.name}" נוסף לעגלה בהצלחה!`);
+    }
+
+    function addActiveModalToCart() {
+      if (!activeModalBook) return;
+      const index = allBooks.findIndex(b => b.name === activeModalBook.name);
+      if (index !== -1) {
+        addToCart(null, index);
+        closeBookModal();
+      }
+    }
+
+    function updateCartBadge() {
+      const totalCount = cart.reduce((sum, item) => sum + item.qty, 0);
+      document.getElementById('cartCountBadge').textContent = totalCount;
+    }
+
+    function openCartModal() {
+      renderCartItems();
+      document.getElementById('cartModal').classList.add('active');
+    }
+
+    function closeCartModal() {
+      document.getElementById('cartModal').classList.remove('active');
+    }
+
+    function changeQty(index, delta) {
+      cart[index].qty += delta;
+      if (cart[index].qty <= 0) {
+        cart.splice(index, 1);
+      }
+      updateCartBadge();
+      renderCartItems();
+    }
+
+    function removeFromCart(index) {
+      cart.splice(index, 1);
+      updateCartBadge();
+      renderCartItems();
+    }
+
+    function renderCartItems() {
+      const list = document.getElementById('cartItemsList');
+      list.innerHTML = '';
+
+      if (cart.length === 0) {
+        list.innerHTML = '<div style="text-align:center; color:#888; padding:30px; font-size:1.05rem;">סל הקניות שלך ריק כרגע.</div>';
+        document.getElementById('cartTotalPrice').textContent = '0 ₪';
+        return;
+      }
+
+      let totalPrice = 0;
+
+      cart.forEach((item, idx) => {
+        const itemTotal = Number(item.book.price || 0) * item.qty;
+        totalPrice += itemTotal;
+
+        list.innerHTML += `
+          <div class="cart-item-row">
+            <div class="cart-item-info">
+              <div class="cart-item-title">${item.book.name}</div>
+              <div class="cart-item-price">${item.book.price} ₪ ליחידה (סה״כ: ${itemTotal} ₪)</div>
+            </div>
+            <div class="cart-item-controls">
+              <button class="qty-btn" onclick="changeQty(${idx}, -1)">-</button>
+              <span style="font-weight:bold; min-width:20px; text-align:center;">${item.qty}</span>
+              <button class="qty-btn" onclick="changeQty(${idx}, 1)">+</button>
+              <button class="remove-item-btn" onclick="removeFromCart(${idx})" title="הסר">🗑️</button>
+            </div>
+          </div>
+        `;
+      });
+
+      document.getElementById('cartTotalPrice').textContent = `${totalPrice} ₪`;
+    }
+
+    function checkoutWhatsApp() {
+      if (cart.length === 0) {
+        alert('העגלה ריקה!');
+        return;
+      }
+
+      let message = `שלום, אני מעוניין לבצע הזמנה מאוצר הספרים כרם ביבנה:\n\n`;
+      let total = 0;
+
+      cart.forEach((item, idx) => {
+        const sub = Number(item.book.price || 0) * item.qty;
+        total += sub;
+        message += `${idx + 1}. *${item.book.name}* (כמות: ${item.qty}) - ${sub} ₪\n`;
+      });
+
+      message += `\n💰 *סה״כ לתשלום: ${total} ₪*`;
+
+      const encoded = encodeURIComponent(message);
+      const url = `https://wa.me/${PHONE}?text=${encoded}`;
+      document.getElementById('checkoutWaBtn').href = url;
+    }
+
     function shareBook(event, index) {
       event.stopPropagation();
       const book = allBooks[index];
@@ -782,9 +1065,11 @@
       document.getElementById('modalBookDesc').textContent = book.desc || 'אין תיאור נוסף עבור ספר זה.';
       document.getElementById('modalBookPrice').textContent = `${book.price} ₪`;
 
-      const authorText = book.author ? ` מאת ${book.author}` : '';
-      const msg = encodeURIComponent(`שלום, אני מעוניין לרכוש את הספר "${book.name}"${authorText} במחיר ${book.price} ₪ מתוך אתר אוצר הספרים כרם ביבנה.`);
-      document.getElementById('modalBookWa').href = `https://wa.me/${PHONE}?text=${msg}`;
+      // חיבור כפתור הוספה לעגלה במודאל
+      document.getElementById('modalAddToCartBtn').onclick = () => {
+        addToCart(null, index);
+        closeBookModal();
+      };
 
       document.getElementById('bookDetailsModal').classList.add('active');
     }
@@ -834,9 +1119,6 @@
       filteredWithIndex.forEach(item => {
         const b = item.book;
         const idx = item.originalIndex;
-        const authorText = b.author ? ` מאת ${b.author}` : '';
-        const msg = encodeURIComponent(`שלום, אני מעוניין לרכוש את הספר "${b.name}"${authorText} במחיר ${b.price} ₪ מתוך אתר אוצר הספרים כרם ביבנה.`);
-        const wa = `https://wa.me/${PHONE}?text=${msg}`;
 
         grid.innerHTML += `
           <div class="book-card" onclick="openBookDetails(${idx})">
@@ -853,7 +1135,7 @@
                 <div class="book-price">${b.price} ₪</div>
                 <div class="card-actions">
                   <button class="share-btn" onclick="shareBook(event, ${idx})" title="שתף ספר">📲</button>
-                  <a href="${wa}" target="_blank" class="wa-link" onclick="event.stopPropagation()">הזמנה</a>
+                  <button class="cart-btn" onclick="addToCart(event, ${idx})" title="הוסף לעגלה">🛒 הוסף</button>
                 </div>
               </div>
             </div>
