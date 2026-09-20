@@ -417,7 +417,6 @@
       gap: 4px;
     }
 
-    /* בורר כמויות מהיר בכרטיס */
     .quick-qty-selector {
       display: flex;
       align-items: center;
@@ -496,7 +495,6 @@
       color: #fff;
     }
 
-    /* תצוגת רשימה (List) */
     .books-grid.list-view {
       display: flex;
       flex-direction: column;
@@ -544,7 +542,7 @@
       gap: 15px;
     }
 
-    /* מודאל פרטי ספר מוגדל */
+    /* מודאל פרטי ספר מוגדל ומודאל הזמנה מיוחדת */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -558,11 +556,11 @@
 
     .modal-overlay.active { display: flex; }
 
-    .book-modal-box {
+    .book-modal-box, .custom-request-box {
       background: #ffffff;
       border-radius: 16px;
       width: 100%;
-      max-width: 650px;
+      max-width: 550px;
       max-height: 90vh;
       overflow-y: auto;
       box-shadow: 0 12px 36px rgba(0,0,0,0.3);
@@ -680,6 +678,60 @@
 
     .modal-close:hover {
       background: rgba(0,0,0,0.8);
+    }
+
+    /* תוכן מודאל הזמנה מיוחדת */
+    .custom-request-content {
+      padding: 25px;
+    }
+
+    .custom-request-content h2 {
+      font-family: 'Frank Ruhl Libre', serif;
+      color: var(--primary);
+      font-size: 1.7rem;
+      margin-bottom: 8px;
+      border-bottom: 2px solid var(--secondary);
+      padding-bottom: 10px;
+    }
+
+    .custom-request-content p {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      color: var(--primary);
+      font-size: 0.95rem;
+      margin-bottom: 6px;
+    }
+
+    .form-input, .form-textarea {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--secondary);
+      background: #fdfaf6;
+      font-family: inherit;
+      font-size: 0.95rem;
+      color: var(--text);
+    }
+
+    .form-textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .form-input:focus, .form-textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 5px rgba(61,14,23,0.15);
     }
 
     /* מודאל סל קניות */
@@ -1057,18 +1109,49 @@
     </div>
   </div>
 
-  <a href="https://wa.me/972538218060?text=%D7%A9%D7%9C%D7%95%D7%9D%2C%20%D7%9C%D7%90%20%D7%9E%20%D7%A6%D7%90%D7%AA%20%D7%91%D7%90%D7%AA%20%D7%90%D7%AA%20%D7%94%D7%A1%D7%A4%D7%A8%20%D7%A9%D7%90%D7%A0%D7%99%20%D7%9E%2C%20%D7%90%D7%A4%D7%A9%D7%A8%20%D7%9C%D7%94%D7%96%D7%99%D7%9F%3A%20" 
-     target="_blank" 
-     rel="noopener noreferrer" 
-     class="floating-whatsapp" 
-     title="פנייה בווצאפ לאוצר הספרים">
-    <div class="whatsapp-bubble">לא מצאת ספר? פנה אלינו בווצאפ!</div>
-    <div class="whatsapp-icon-btn">
+  <!-- מודאל הזמנת ספר מיוחד שלא נמצא בקטלוג -->
+  <div class="modal-overlay" id="customRequestModal" onclick="closeCustomRequestModal(event)">
+    <div class="custom-request-box" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="closeCustomRequestModal()">✕</button>
+      <div class="custom-request-content">
+        <h2>חיפוש והזמנת ספר מיוחד</h2>
+        <p>לא מצאת את הספר שחיפשת באתר? מלא את הפרטים ונשלח לאוראל הודעת וואטסאפ מסודרת לבדיקת זמינות והזמנה.</p>
+        
+        <div class="form-group">
+          <label for="customBookName">שם הספר:</label>
+          <input type="text" id="customBookName" class="form-input" placeholder="לדוגמה: שו\"ת משנה הלכות">
+        </div>
+
+        <div class="form-group">
+          <label for="customBookAuthor">שם המחבר (אופציונלי):</label>
+          <input type="text" id="customBookAuthor" class="form-input" placeholder="לדוגמה: הרב משה שטרנבוך">
+        </div>
+
+        <div class="form-group">
+          <label for="customBookDetails">כמות, מהדורה או הערות נוספות:</label>
+          <textarea id="customBookDetails" class="form-textarea" placeholder="לדוגמה: אני צריך 2 עותקים, כריכה קשה אם אפשר..."></textarea>
+        </div>
+
+        <a href="#" target="_blank" class="btn-checkout" id="sendCustomWaBtn" onclick="sendCustomWhatsApp()">
+          📲 שליחת בקשת הזמנה בוואטסאפ
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- כפתור ווצאפ צף שכולל גם פתיחת טופס הזמנה מיוחדת -->
+  <div class="floating-whatsapp">
+    <a href="javascript:void(0)" onclick="openCustomRequestModal()" class="whatsapp-bubble" style="text-decoration:none;">לא מצאת ספר? לחץ כאן להזמנה מיוחדת!</a>
+    <a href="https://wa.me/972538218060?text=%D7%A9%D7%9C%D7%95%D7%9D%2C%20%D7%9C%D7%90%20%D7%9E%D7%A6%D7%90%D7%AA%D7%99%20%D7%91%D7%90%D7%AA%D7%A8%20%D7%90%D7%AA%20%D7%94%D7%A1%D7%A4%D7%A8%20%D7%A9%D7%90%D7%A0%D7%99%20%D7%9E%D7%97%D7%A4%D7%A9.%20%D7%94%D7%90%D7%9D%20%D7%90%D7%A4%D7%A9%D7%A8%20%D7%9C%D7%94%D7%96%D7%9E%D7%99%D7%9F%3A" 
+       target="_blank" 
+       rel="noopener noreferrer" 
+       class="whatsapp-icon-btn" 
+       title="פנייה מהירה בווצאפ">
       <svg width="34" height="34" viewBox="0 0 24 24" fill="currentColor">
         <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.275.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.42-.099.825zm-3.392-12.416c-5.514 0-10 4.486-10 10 0 1.76.459 3.413 1.261 4.855l-1.292 4.729 4.856-1.274c1.398.761 2.991 1.19 4.675 1.19 5.514 0 10-4.486 10-10s-4.486-10-10-10z"/>
       </svg>
-    </div>
-  </a>
+    </a>
+  </div>
 
   <footer>
     <p>אוצר הספרים כרם ביבנה • ספרי קודש וייודאיקה • אוראל - 053-8218060 ©</p>
@@ -1238,7 +1321,7 @@
       saveCartToStorage();
       showToast(`🛒 ${qtyToAdd} יחידות מ-"${book.name}" נוספו לעגלה!`);
       
-      if (input) input.value = 1; // איפוס חזרה ל-1 בכרטיס
+      if (input) input.value = 1;
     }
 
     function adjustModalQty(delta) {
@@ -1262,6 +1345,44 @@
 
     function closeCartModal() {
       document.getElementById('cartModal').classList.remove('active');
+    }
+
+    /* ניהול מודאל הזמנה מיוחדת */
+    function openCustomRequestModal() {
+      document.getElementById('customBookName').value = '';
+      document.getElementById('customBookAuthor').value = '';
+      document.getElementById('customBookDetails').value = '';
+      document.getElementById('customRequestModal').classList.add('active');
+    }
+
+    function closeCustomRequestModal(event) {
+      if (event && event.target !== event.currentTarget) return;
+      document.getElementById('customRequestModal').classList.remove('active');
+    }
+
+    function sendCustomWhatsApp() {
+      const bookName = document.getElementById('customBookName').value.trim();
+      const author = document.getElementById('customBookAuthor').value.trim();
+      const details = document.getElementById('customBookDetails').value.trim();
+
+      if (!bookName) {
+        alert('נא להזין את שם הספר המבוקש.');
+        document.getElementById('customBookName').focus();
+        return;
+      }
+
+      let message = `שלום, חיפשתי ספר שלא מופיע באתר ואשמח לבדוק אפשרות להזמנה:\n\n`;
+      message += `📚 *שם הספר:* ${bookName}\n`;
+      if (author) {
+        message += `✍️ *מחבר:* ${author}\n`;
+      }
+      if (details) {
+        message += `📝 *הערות/כמות:* ${details}\n`;
+      }
+
+      const encoded = encodeURIComponent(message);
+      const url = `https://wa.me/${PHONE}?text=${encoded}`;
+      document.getElementById('sendCustomWaBtn').href = url;
     }
 
     function changeQty(index, delta) {
@@ -1456,7 +1577,12 @@
       });
 
       if (filteredWithIndex.length === 0) {
-        grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; color:#888; padding:45px; font-size:1.1rem;">לא נמצאו ספרים התואמים לסינון זה.</div>';
+        grid.innerHTML = `
+          <div style="grid-column:1/-1; text-align:center; padding:40px; background:#fff; border-radius:12px; border:1px solid var(--border);">
+            <p style="color:#888; font-size:1.1rem; margin-bottom:15px;">לא נמצאו ספרים התואמים לחיפוש זה.</p>
+            <button onclick="openCustomRequestModal()" class="cart-btn" style="padding:10px 18px; font-size:1rem; margin:0 auto;">🔍 לחץ כאן להזמנת ספר מיוחד שלא ברשימה</button>
+          </div>
+        `;
         return;
       }
 
