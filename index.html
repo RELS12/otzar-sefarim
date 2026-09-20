@@ -1119,12 +1119,12 @@
         
         <div class="form-group">
           <label for="customBookName">שם הספר:</label>
-          <input type="text" id="customBookName" class="form-input" placeholder="לדוגמה: שו\"ת משנה הלכות">
+          <input type="text" id="customBookName" class="form-input" placeholder="לדוגמה: אורות התשובה">
         </div>
 
         <div class="form-group">
           <label for="customBookAuthor">שם המחבר (אופציונלי):</label>
-          <input type="text" id="customBookAuthor" class="form-input" placeholder="לדוגמה: הרב משה שטרנבוך">
+          <input type="text" id="customBookAuthor" class="form-input" placeholder="לדוגמה: הרב קוק">
         </div>
 
         <div class="form-group">
@@ -1142,7 +1142,7 @@
   <!-- כפתור ווצאפ צף שכולל גם פתיחת טופס הזמנה מיוחדת -->
   <div class="floating-whatsapp">
     <a href="javascript:void(0)" onclick="openCustomRequestModal()" class="whatsapp-bubble" style="text-decoration:none;">לא מצאת ספר? לחץ כאן להזמנה מיוחדת!</a>
-    <a href="https://wa.me/972538218060?text=%D7%A9%D7%9C%D7%95%D7%9D%2C%20%D7%9C%D7%90%20%D7%9E%D7%A6%D7%90%D7%AA%D7%99%20%D7%91%D7%90%D7%AA%D7%A8%20%D7%90%D7%AA%20%D7%94%D7%A1%D7%A4%D7%A8%20%D7%A9%D7%90%D7%A0%D7%99%20%D7%9E%D7%97%D7%A4%D7%A9.%20%D7%94%D7%90%D7%9D%20%D7%90%D7%A4%D7%A9%D7%A8%20%D7%9C%D7%94%D7%96%D7%9E%D7%99%D7%9F%3A" 
+    <a href="https://wa.me/972538218060?text=%D7%A9%D7%9C%D7%95%D7%9D%2C%20%D7%9C%D7%90%20%D7%9E%2C%20%D7%90%D7%A4%D7%A8%20%D7%9C%D7%94%D7%96%D7%99%D7%9F%3A" 
        target="_blank" 
        rel="noopener noreferrer" 
        class="whatsapp-icon-btn" 
@@ -1347,7 +1347,6 @@
       document.getElementById('cartModal').classList.remove('active');
     }
 
-    /* ניהול מודאל הזמנה מיוחדת */
     function openCustomRequestModal() {
       document.getElementById('customBookName').value = '';
       document.getElementById('customBookAuthor').value = '';
