@@ -838,7 +838,7 @@
       flex-direction: column;
       gap: 12px;
       margin-bottom: 15px;
-      max-height: 32vh;
+      max-height: 28vh;
       overflow-y: auto;
     }
 
@@ -918,39 +918,49 @@
       margin-right: 4px;
     }
 
+    .cart-customer-details {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
     .cart-notes-container {
       margin-bottom: 15px;
     }
 
-    .cart-notes-container label {
+    .cart-notes-container label, .cart-customer-details label {
       display: block;
       font-weight: 600;
       color: var(--primary);
-      font-size: 0.95rem;
-      margin-bottom: 6px;
+      font-size: 0.9rem;
+      margin-bottom: 4px;
     }
 
-    .cart-notes-input {
+    .cart-notes-input, .cart-customer-input {
       width: 100%;
-      padding: 11px 14px;
-      border-radius: 10px;
+      padding: 9px 12px;
+      border-radius: 8px;
       border: 1px solid var(--secondary);
       background: #fdfaf6;
       font-family: inherit;
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       color: var(--text);
+    }
+
+    .cart-notes-input {
       resize: vertical;
-      min-height: 65px;
+      min-height: 50px;
     }
 
     .cart-summary {
       border-top: 2px solid #f2ebe1;
-      padding-top: 15px;
+      padding-top: 12px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 20px;
-      font-size: 1.3rem;
+      margin-bottom: 15px;
+      font-size: 1.25rem;
       font-weight: bold;
       color: var(--primary);
     }
@@ -1199,6 +1209,17 @@
       <h2>סל הקניות שלך</h2>
       <div class="cart-items-list" id="cartItemsList"></div>
       
+      <div class="cart-customer-details">
+        <div>
+          <label for="customerNameInput">שם הלקוח:</label>
+          <input type="text" id="customerNameInput" class="cart-customer-input" placeholder="לדוגמה: אברהם כהן">
+        </div>
+        <div>
+          <label for="customerPhoneInput">מספר טלפון:</label>
+          <input type="tel" id="customerPhoneInput" class="cart-customer-input" placeholder="לדוגמה: 0501234567">
+        </div>
+      </div>
+
       <div class="cart-notes-container">
         <label for="cartNotes">הערות להזמנה / בקשות מיוחדות:</label>
         <textarea id="cartNotes" class="cart-notes-input" placeholder="לדוגמה: נא לעטוף למתנה, או בקשות לגבי איסוף..."></textarea>
@@ -1208,9 +1229,10 @@
         <span>סה״כ לתשלום:</span>
         <span id="cartTotalPrice">0 ₪</span>
       </div>
-      <a href="#" target="_blank" class="btn-checkout" id="checkoutWaBtn" onclick="checkoutWhatsApp()">
+      
+      <button class="btn-checkout" onclick="checkoutWhatsApp()">
         📲 שליחת הזמנה מסודרת בווצאפ
-      </a>
+      </button>
     </div>
   </div>
 
@@ -1641,25 +1663,75 @@
         return;
       }
 
-      let message = `שלום, אני מעוניין לבצע הזמנה מאוצר הספרים כרם ביבנה:\n\n`;
+      const customerName = document.getElementById('customerNameInput').value.trim();
+      const customerPhone = document.getElementById('customerPhoneInput').value.trim();
+
+      if (!customerName) {
+        alert('נא להזין את שם הלקוח.');
+        document.getElementById('customerNameInput').focus();
+        return;
+      }
+      if (!customerPhone) {
+        alert('נא להזין מספר טלפון.');
+        document.getElementById('customerPhoneInput').focus();
+        return;
+      }
+
+      let itemsSummary = "";
       let total = 0;
 
       cart.forEach((item, idx) => {
         const sub = Number(item.book.price || 0) * item.qty;
         total += sub;
+        itemsSummary += `${idx + 1}. ${item.book.name} (כמות: ${item.qty}) - ${sub} ₪; `;
+      });
+
+      const notes = document.getElementById('cartNotes').value.trim();
+
+      // שליחה שקטה לגיליון "הזמנות" בגוגל שיטס
+      if (SCRIPT_URL) {
+        fetch(SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            customerName: customerName,
+            customerPhone: customerPhone,
+            items: itemsSummary,
+            totalPrice: total + " ₪",
+            notes: notes
+          })
+        }).catch(err => console.error("Error saving order to sheet:", err));
+      }
+
+      // יצירת הודעת הוואטסאפ המפורטת לאוראל
+      let message = `שלום אוראל, חדש מאוצר הספרים!\n\n`;
+      message += `👤 *שם הלקוח:* ${customerName}\n`;
+      message += `📞 *טלפון:* ${customerPhone}\n\n`;
+      message += `🛒 *פירוט ההזמנה:*\n`;
+
+      cart.forEach((item, idx) => {
+        const sub = Number(item.book.price || 0) * item.qty;
         message += `${idx + 1}. *${item.book.name}* (כמות: ${item.qty}) - ${sub} ₪\n`;
       });
 
       message += `\n💰 *סה״כ לתשלום: ${total} ₪*`;
 
-      const notes = document.getElementById('cartNotes').value.trim();
       if (notes) {
-        message += `\n\n📝 *הערות להזמנה:* ${notes}`;
+        message += `\n\n📝 *הערות:* ${notes}`;
       }
 
       const encoded = encodeURIComponent(message);
       const url = `https://wa.me/${PHONE}?text=${encoded}`;
-      document.getElementById('checkoutWaBtn').href = url;
+      
+      // איפוס העגלה וסגירת המודאל
+      cart = [];
+      saveCartToStorage();
+      updateCartBadge();
+      closeCartModal();
+
+      // פתיחת וואטסאפ
+      window.open(url, '_blank');
     }
 
     function shareBook(event, index) {
