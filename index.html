@@ -50,6 +50,7 @@
     body.dark-mode .cart-notes-input,
     body.dark-mode .form-input,
     body.dark-mode .form-textarea,
+    body.dark-mode .quick-qty-input,
     body.dark-mode .book-modal-desc {
       background-color: #1a1a1a !important;
       color: #f1f1f1 !important;
@@ -160,11 +161,6 @@
       width: 200px;
       height: 200px;
       overflow: hidden;
-      transition: transform 0.3s ease;
-    }
-
-    .logo-wrapper:hover {
-      transform: scale(1.02);
     }
 
     .logo-wrapper img {
@@ -539,7 +535,7 @@
     }
 
     .quick-qty-input {
-      width: 26px;
+      width: 32px;
       border: none;
       background: transparent;
       text-align: center;
@@ -636,7 +632,6 @@
       gap: 15px;
     }
 
-    /* מודאלים עיצוביים */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -1184,9 +1179,9 @@
         <div class="book-modal-footer">
           <div class="book-modal-price" id="modalBookPrice"></div>
           <div style="display: flex; gap: 8px; align-items: center;">
-            <div class="quick-qty-selector">
+            <div class="quick-qty-selector" onclick="event.stopPropagation()">
               <button class="quick-qty-btn" onclick="adjustModalQty(-1)">-</button>
-              <input type="text" id="modalQtyInput" class="quick-qty-input" value="1" readonly>
+              <input type="text" id="modalQtyInput" class="quick-qty-input" value="1" oninput="validateQtyInput(this)">
               <button class="quick-qty-btn" onclick="adjustModalQty(1)">+</button>
             </div>
             <button class="share-btn" onclick="shareCurrentBook()">📲 שיתוף</button>
@@ -1497,13 +1492,19 @@
       input.value = current;
     }
 
+    function validateQtyInput(input) {
+      // מאפשר רק מספרים ומנקה תווים אחרים
+      input.value = input.value.replace(/[^0-9]/g, '');
+    }
+
     function addToCartWithQty(event, index) {
       if (event) event.stopPropagation();
       const book = allBooks[index];
       if (!book) return;
 
       const input = document.getElementById(`cardQty-${index}`);
-      const qtyToAdd = input ? (parseInt(input.value) || 1) : 1;
+      let qtyToAdd = input ? (parseInt(input.value) || 1) : 1;
+      if (qtyToAdd < 1) qtyToAdd = 1;
 
       const existing = cart.find(item => item.book.name === book.name);
       if (existing) {
@@ -1711,7 +1712,9 @@
       document.getElementById('modalQtyInput').value = 1;
 
       document.getElementById('modalAddToCartBtn').onclick = () => {
-        const qty = parseInt(document.getElementById('modalQtyInput').value) || 1;
+        let qty = parseInt(document.getElementById('modalQtyInput').value) || 1;
+        if (qty < 1) qty = 1;
+
         const existing = cart.find(item => item.book.name === book.name);
         if (existing) {
           existing.qty += qty;
@@ -1797,9 +1800,9 @@
               <div class="book-footer">
                 <div class="book-price">${b.price} ₪</div>
                 <div class="card-actions" onclick="event.stopPropagation()">
-                  <div class="quick-qty-selector">
+                  <div class="quick-qty-selector" onclick="event.stopPropagation()">
                     <button class="quick-qty-btn" onclick="changeCardQty(event, ${idx}, -1)">-</button>
-                    <input type="text" id="cardQty-${idx}" class="quick-qty-input" value="1" readonly>
+                    <input type="text" id="cardQty-${idx}" class="quick-qty-input" value="1" oninput="validateQtyInput(this)">
                     <button class="quick-qty-btn" onclick="changeCardQty(event, ${idx}, 1)">+</button>
                   </div>
                   <button class="share-btn" onclick="shareBook(event, ${idx})" title="שתף ספר">📲</button>
