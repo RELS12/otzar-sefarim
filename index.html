@@ -1150,7 +1150,7 @@
         </div>
 
         <div class="view-mode-container">
-          <button class="view-btn active" id="gridViewBtn" onclick="setViewMode('grid')" title="תצוגת רשת">🖼️ רשת</button>
+          <button class="view-btn active" id="gridViewBtn" onclick="setViewMode('grid')" title="תצוגת קוביות">🔲 קוביות</button>
           <button class="view-btn" id="listViewBtn" onclick="setViewMode('list')" title="תצוגת רשימה">☰ רשימה</button>
         </div>
       </div>
@@ -1493,7 +1493,6 @@
     }
 
     function validateQtyInput(input) {
-      // מאפשר רק מספרים ומנקה תווים אחרים
       input.value = input.value.replace(/[^0-9]/g, '');
     }
 
