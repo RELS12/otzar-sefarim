@@ -414,17 +414,24 @@
       z-index: 2;
     }
 
-    .book-tag {
+    .book-tags-container {
       position: absolute;
       top: 12px;
       right: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      align-items: flex-end;
+      z-index: 2;
+    }
+
+    .book-tag {
       background: #c93b2b;
       color: #fff;
       padding: 4px 10px;
       border-radius: 12px;
       font-size: 0.75rem;
       font-weight: bold;
-      z-index: 2;
       box-shadow: 0 2px 6px rgba(0,0,0,0.2);
     }
 
@@ -607,7 +614,7 @@
     }
 
     .books-grid.list-view .book-badge, 
-    .books-grid.list-view .book-tag,
+    .books-grid.list-view .book-tags-container,
     .books-grid.list-view .book-desc,
     .books-grid.list-view .book-author {
       display: none;
@@ -1857,10 +1864,17 @@
         const b = item.book;
         const idx = item.originalIndex;
 
+        // טיפול במספר תגיות המופרדות בפסיקים
+        let tagsHtml = '';
+        if (b.tag && b.tag.trim() !== '') {
+          const tagsList = b.tag.split(',').map(t => t.trim()).filter(t => t !== '');
+          tagsHtml = `<div class="book-tags-container">` + tagsList.map(t => `<span class="book-tag">${t}</span>`).join('') + `</div>`;
+        }
+
         grid.innerHTML += `
           <div class="book-card" onclick="openBookDetails(${idx})">
             ${b.category ? `<span class="book-badge">${b.category}</span>` : ''}
-            ${b.tag && b.tag.trim() !== '' ? `<span class="book-tag">${b.tag}</span>` : ''}
+            ${tagsHtml}
             <div class="book-img">
               ${b.img && b.img.trim() !== '' ? `<img src="${b.img}" onerror="this.parentElement.innerHTML='<span style=\\'font-size:3rem;\\'>📖</span>'">` : '<span style="font-size:3rem;">📖</span>'}
             </div>
