@@ -419,20 +419,22 @@
       top: 12px;
       right: 12px;
       display: flex;
-      flex-direction: column;
-      gap: 4px;
-      align-items: flex-end;
+      flex-direction: row-reverse; /* מסדר אותם בשורה מימין לשמאל */
+      gap: 5px;
+      align-items: center;
       z-index: 2;
+      max-width: 70%;
+      flex-wrap: wrap;
     }
 
     .book-tag {
-      background: #c93b2b;
       color: #fff;
-      padding: 4px 10px;
+      padding: 4px 9px;
       border-radius: 12px;
       font-size: 0.75rem;
       font-weight: bold;
       box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      white-space: nowrap;
     }
 
     .book-img {
@@ -1294,7 +1296,7 @@
 
   <div class="floating-whatsapp">
     <a href="javascript:void(0)" onclick="openCustomRequestModal()" class="whatsapp-bubble" style="text-decoration:none;">לא מצאת ספר? לחץ כאן להזמנה מיוחדת!</a>
-    <a href="https://wa.me/972538218060?text=%D7%A9%D7%9C%D7%95%D7%9D%20%D7%90%D7%95%D7%A8%D7%90%D7%9C%2C%20%D7%90%D7%A9%D7%9E%D7%97%20%D7%9C%D7%94%D7%AA%D7%99%D7%A2%D7%A5%20%D7%9C%D7%92%D7%91%D7%99%20%D7%A1%D7%A4%D7%A8%20%D7%9E%D7%A1%D7%95%D7%99%D7%9D%20%D7%91%D7%90%D7%95%D7%A6%D7%A8%20%D7%94%D7%A1%D7%A4%D7%A8%D7%99%D7%9D%20%D7%9B%D7%A8%D7%9D%20%D7%91%D7%99%D7%91%D7%A0%D7%94." 
+    <a href="https://wa.me/972538218060?text=%D7%A9%D7%9C%D7%95%D7%9D%20%D7%90%D7%95%D7%A8%D7%90%D7%9C%2C%20%D7%90%D7%A9%D7%9E%D7%97%20%D7%9C%2C%20%D7%90%D7%A9%D7%9E%D7%97%20%D7%9C%2C%20%D7%90%D7%A9%D7%9E%2C%20%D7%90%D7%A9%D7%9E%D7%97%20%D7%9C%D7%94%D7%AA%D7%99%D7%A2%D7%A5%20%D7%9C%D7%92%D7%91%D7%99%20%D7%A1%D7%A4%D7%A8%20%D7%9E%D7%A1%D7%95%D7%99%D7%9D%20%D7%91%D7%90%D7%95%D7%A6%D7%A8%20%D7%94%D7%A1%D7%A4%D7%A8%D7%99%D7%9D%20%D7%9B%D7%A8%D7%9D%20%D7%91%D7%99%D7%91%D7%A0%D7%94." 
        target="_blank" 
        rel="noopener noreferrer" 
        class="whatsapp-icon-btn" 
@@ -1813,6 +1815,18 @@
       activeModalBook = null;
     }
 
+    // פונקציה לבחירת צבע שונה לכל תגית לפי התוכן שלה
+    function getTagColor(tagName) {
+      const t = tagName.trim();
+      if (t.includes('מבצע') || t.includes('הנחה')) return '#c93b2b'; // אדום בולט
+      if (t.includes('חדש')) return '#27ae60'; // ירוק רענן
+      if (t.includes('מומלץ') || t.includes('פופולרי')) return '#d35400'; // כתום עמוק
+      if (t.includes('בלעדי') || t.includes('נדיר')) return '#8e44ad'; // סגול
+      if (t.includes('מתנה')) return '#2980b9'; // כחול
+      // צבע ברירת מחדל חום-זהב יפה לתגיות אחרות
+      return '#b8863b';
+    }
+
     function renderCatalog() {
       const grid = document.getElementById('booksGrid');
       grid.innerHTML = '';
@@ -1864,11 +1878,13 @@
         const b = item.book;
         const idx = item.originalIndex;
 
-        // טיפול במספר תגיות המופרדות בפסיקים
+        // בניית תגיות מרובות בשורה עם צבעים שונים
         let tagsHtml = '';
         if (b.tag && b.tag.trim() !== '') {
           const tagsList = b.tag.split(',').map(t => t.trim()).filter(t => t !== '');
-          tagsHtml = `<div class="book-tags-container">` + tagsList.map(t => `<span class="book-tag">${t}</span>`).join('') + `</div>`;
+          tagsHtml = `<div class="book-tags-container">` + 
+            tagsList.map(t => `<span class="book-tag" style="background-color: ${getTagColor(t)};">${t}</span>`).join('') + 
+          `</div>`;
         }
 
         grid.innerHTML += `
